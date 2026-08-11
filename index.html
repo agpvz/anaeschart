@@ -120,7 +120,8 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
 .circ{display:inline-block;cursor:pointer;padding:0 .5mm;border:var(--bw) solid transparent;
   border-radius:50%;line-height:1.1}
 .circ input{display:none}
-.circ.u{font-size:3.6pt;padding:0 .35mm}
+.circ.u{font-size:3.4pt;padding:0 .25mm}
+.units{display:flex;align-items:center;justify-content:flex-end;gap:0;padding-right:.2mm}
 .circ:has(input:checked){border-color:var(--ink);color:var(--ink)}
 .crow{display:grid;grid-template-columns:17mm 4mm 1fr 4mm;align-items:stretch;min-height:2.7mm}
 .clbl{font-size:4.4pt;font-weight:700;display:flex;align-items:center;padding-right:.5mm;line-height:1.05}
@@ -597,17 +598,16 @@ $('codeGrid').innerHTML = CODES.map(c =>
 /* ── anaesthesia chart ───────────────────────────────────────── */
 const axis = () => `<div class="ax">${[200,180,160,140,120,100,80,60,40].map(v=>`<span>${v}</span>`).join('')}</div>`;
 $('chart').innerHTML =
-  `<div class="crow"><div class="clbl ctr" style="justify-content:center">Agent</div><div></div>
+  `<div class="crow" style="grid-template-columns:14mm 7mm 1fr 4mm">
+     <div class="clbl ctr" style="justify-content:center">Agent</div><div></div>
      <div class="clbl ctr" style="justify-content:center;border-bottom:var(--bw) solid var(--g)">Dose</div><div></div></div>` +
   Array.from({length:8},(_,r)=>
-    `<div class="crow">
-       <div class="clbl" style="gap:0">
-         <input name="agents.${r}.agent" style="flex:1;min-width:0">${
-         ['g','mg','mcg'].map(u =>
-           `<label class="circ u"><input type="radio" name="agents.${r}.unit" value="${u}"><span>${u}</span></label>`
-         ).join('')}
-       </div>
-       <div></div>${cells('agents.'+r+'.dose')}<div></div>
+    `<div class="crow" style="grid-template-columns:14mm 7mm 1fr 4mm">
+       <div class="clbl">${inp('agents.'+r+'.agent')}</div>
+       <div class="units">${['g','mg','mcg'].map(u =>
+         `<label class="circ u"><input type="radio" name="agents.${r}.unit" value="${u}"><span>${u}</span></label>`
+       ).join('')}</div>
+       ${cells('agents.'+r+'.dose')}<div></div>
      </div>`).join('') +
   crow('Vapour(%)','chart.vapour') +
   `<div class="crow">
