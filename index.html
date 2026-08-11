@@ -117,6 +117,10 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
 .mini{font-size:4.4pt;font-weight:700;display:flex;align-items:center;gap:.4mm}
 .mini input[type=text]{border-bottom:var(--bw) solid var(--g);font-size:5.5pt}
 
+.circ{display:inline-block;cursor:pointer;padding:0 .5mm;border:var(--bw) solid transparent;
+  border-radius:50%;line-height:1.1}
+.circ input{display:none}
+.circ:has(input:checked){border-color:var(--ink);color:var(--ink)}
 .crow{display:grid;grid-template-columns:17mm 4mm 1fr 4mm;align-items:stretch;min-height:2.7mm}
 .clbl{font-size:4.4pt;font-weight:700;display:flex;align-items:center;padding-right:.5mm;line-height:1.05}
 .cells{display:grid;grid-template-columns:repeat(30,1fr);border-left:var(--bw) solid var(--g)}
@@ -597,7 +601,13 @@ $('chart').innerHTML =
   Array.from({length:8},(_,r)=>
     `<div class="crow"><div class="clbl">${inp('agents.'+r+'.agent')}</div><div></div>${cells('agents.'+r+'.dose')}<div></div></div>`).join('') +
   crow('Vapour(%)','chart.vapour') +
-  crow('oxygen/nitrous/Air','chart.gas') +
+  `<div class="crow">
+     <div class="clbl" style="gap:0;flex-wrap:wrap">${
+       [['oxygen','oxygen'],['nitrous','nitrous'],['air','Air']]
+         .map(([k,l]) => `<label class="circ"><input type="checkbox" name="chart.gasMix.${k}"><span>${l}</span></label>`)
+         .join('/')}</div>
+     <div></div>${cells('chart.gas')}<div></div>
+   </div>` +
   `<div class="crow">
      <div class="clbl" style="gap:.4mm;flex-wrap:wrap">Time:<input type="time" class="tstart" name="chart.startTime">
        <select class="tstep" name="chart.interval"><option value="5">5 min</option><option value="15">15 min</option></select>
