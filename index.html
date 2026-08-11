@@ -635,9 +635,13 @@ MAP <b style="color:var(--ink)">✕</b> (calculated)</div>
   crow('O₂ saturation(SaO₂)','chart.spo2') +
   crow('End tidal CO₂(ETCO₂)','chart.etco2') +
   crow('Fluids','chart.fluids') +
-  crow('Infusions','chart.infusion0') +
-  crow('','chart.infusion1') +
-  crow('','chart.infusion2') +
+  Array.from({length:3},(_,r) =>
+    `<div class="crow">
+       <div class="clbl" style="gap:.4mm">${r === 0 ? 'Infusions' : ''}<input
+          name="infusions.${r}.name" title="drug, concentration, route"
+          style="flex:1;min-width:0;font-size:5pt;border-bottom:var(--bw) solid var(--g)"></div>
+       <div></div>${cells('infusions.'+r+'.dose')}<div></div>
+     </div>`).join('') +
   crow('Urine (mL)','chart.urine') +
   crow('Blood loss (mL)','chart.bloodLoss') +
   crow('Temperature (°C)','chart.temp') +

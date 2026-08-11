@@ -36,7 +36,8 @@ Field paths are dotted and nest naturally:
   "patient": { "surname": "…", "firstNames": "…", "birthDate": "1974-03-02" },
   "case":    { "hospital": "…", "procedure": "…", "timeFrom": "16:30" },
   "history": { "asthma": { "yn": "yes", "details": "…" } },
-  "chart":   { "startTime": "16:30", "interval": "5", "hr": [78, 82, …] }
+  "chart":   { "startTime": "16:30", "interval": "5", "hr": [78, 82, …] },
+  "infusions": [{ "name": "Remifentanil 50 µg/mL", "dose": ["0.1", "0.15", …] }]
 }
 ```
 
