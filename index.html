@@ -167,7 +167,7 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
 #bar button{font:inherit;font-size:8.5pt;padding:1mm 2.5mm;border:0;border-radius:1mm;background:#00a651;
   color:#fff;cursor:pointer}
 #bar button:hover{background:#00c060}
-#io{width:100%;height:26mm;font-family:"Courier New",monospace;font-size:8pt;display:none;margin-top:2mm;
+#io{width:100%;height:26mm;font-family:"Courier New",monospace;font-size:8pt;margin-top:2mm;
   color:#000;padding:1mm}
 @media print{
   #bar{display:none}
@@ -1047,9 +1047,14 @@ const SASA = {
   },
   show(o){ live = false; const t = $('io'); t.style.display = 'block'; t.value = JSON.stringify(o, null, 2); },
   apply(){
+    const txt = $('io').value.trim();
+    if (!txt) return note('Nothing to replace with — paste a complete case first.');
+    const p = SASA.extract(txt);
+    if (p === null) return note('Could not read that as JSON.');
+    if (Array.isArray(p)) return SASA.importTable();   // an array is observations, not a case
     const was = live; live = false;
-    try { SASA.fill(JSON.parse($('io').value || '{}')); live = was; sync(); }
-    catch(err){ live = was; alert('Invalid JSON: ' + err.message); }
+    SASA.fill(p); live = was; sync();
+    note(`Form replaced from ${leaves(p)} field(s) — anything absent from the payload was cleared.`);
   }
 };
 window.SASA = SASA;
@@ -1083,7 +1088,8 @@ function report(out){
   note(`${r.placed} row(s) charted`
      + (r.skipped.length ? ` · ${r.skipped.length} outside the grid (${r.skipped.slice(0,4).join(', ')})` : '')
      + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
-     + (r.placed ? ' — check every figure against the source before signing.' : ''));
+     + (r.placed ? ' — check every figure against the source before signing.'
+                 : ' — nothing landed. Check the start time and interval against these times.'));
 }
 
 /* paste or type JSON into the panel and the form follows, once the text parses.
