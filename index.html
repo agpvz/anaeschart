@@ -995,11 +995,18 @@ const SASA = {
     if (rows(p)) return { kind:'chart', r: SASA.fromRows(p) };
 
     if (p && typeof p === 'object' && !Array.isArray(p)){
-      const nested = Object.values(p).find(rows);              // {"observations":[…]}
-      if (nested) return { kind:'chart', r: SASA.fromRows(nested) };
-      const merged = deepMerge(SASA.data(), p);                // a whole-form payload
-      SASA.fill(merged);
-      return { kind:'form', n: leaves(p) };
+      // one payload may carry the whole case: form fields plus an observations array
+      const key = Object.keys(p).find(k => rows(p[k]));
+      const fields = { ...p };
+      let obs = null;
+      if (key){ obs = p[key]; delete fields[key]; }
+      let n = 0;
+      if (Object.keys(fields).length){                         // fields first, so a
+        SASA.fill(deepMerge(SASA.data(), fields));             // startTime/interval in
+        n = leaves(fields);                                    // the payload is in place
+      }
+      const r = obs ? SASA.fromRows(obs) : null;               // before rows are placed
+      return { kind: (n && r) ? 'both' : (r ? 'chart' : 'form'), n, r };
     }
 
     return { kind:'chart', r: SASA.fromRows(SASA.parseTable(txt)) };   // pasted table
@@ -1085,7 +1092,7 @@ function report(out){
   if (out.kind === 'form')
     return note(`${out.n} field(s) populated — check every figure against the source before signing.`);
   const r = out.r;
-  note(`${r.placed} row(s) charted`
+  note((out.n ? `${out.n} field(s) populated · ` : '') + `${r.placed} row(s) charted`
      + (r.skipped.length ? ` · ${r.skipped.length} outside the grid (${r.skipped.slice(0,4).join(', ')})` : '')
      + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
      + (r.placed ? ' — check every figure against the source before signing.'

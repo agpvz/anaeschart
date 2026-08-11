@@ -113,8 +113,15 @@ history — and returns a nested object that the same **Import** button merges i
 JSON.stringify(SASA.schema(), null, 2)   // regenerate after adding fields
 ```
 
-Imports merge, so a demographics photo, a history photo and the vitals table can be
-imported one after another without clearing each other.
+`docs/case-extraction-prompt.md` goes further: photograph everything, attach it all in
+one message, and get back a single object carrying the form fields *and* an
+`observations` array. The importer applies the fields first — so `chart.startTime` and
+`chart.interval` are in place — then places the rows against that grid, reporting both:
+`148 field(s) populated · 29 row(s) charted`. `docs/example-case.json` is a complete
+worked payload in that shape.
+
+Imports also merge, so a demographics photo, a history photo and the vitals table can
+be imported one after another without clearing each other.
 
 **Transcription is a draft.** Read every figure back against the source before the
 record is signed, and keep the source image with the case.
