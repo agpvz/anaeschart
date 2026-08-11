@@ -156,13 +156,13 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
   <strong>SASA form</strong>
   <button type="button" onclick="SASA.watch()">Live JSON</button>
   <button type="button" onclick="SASA.apply()">Apply JSON</button>
-  <button type="button" onclick="SASA.importTable()">Import table</button>
+  <button type="button" onclick="SASA.importTable()">Import</button>
   <button type="button" onclick="SASA.show(SASA.schema())">Field map</button>
   <button type="button" onclick="SASA.fill({})">Clear</button>
   <button type="button" onclick="print()">Print</button>
   <span style="opacity:.7">chart: pick HR or Blood pressure, then click to plot — two clicks in a column give systolic and diastolic</span>
   <span id="msg" style="opacity:.85"></span>
-  <textarea id="io" spellcheck="false"></textarea>
+  <textarea id="io" spellcheck="false" placeholder="Paste the reply from the vision model here — JSON, a table, or the whole reply with its commentary — then press Import."></textarea>
 </div>
 
 <form id="form" onsubmit="return false">
@@ -896,18 +896,60 @@ const SASA = {
       return o;
     });
   },
-  /** read the panel as either a JSON array or a pasted table, then chart it */
+  /** pull the JSON out of a model reply: code fences, preamble, trailing
+      commentary, smart quotes and trailing commas are all tolerated */
+  extract(t){
+    t = String(t).replace(/```[a-z]*/gi,'').replace(/[\u201c\u201d]/g,'"').replace(/[\u2018\u2019]/g,"'");
+    const a = t.indexOf('['), o = t.indexOf('{');
+    const from = a < 0 ? o : (o < 0 ? a : Math.min(a,o));
+    const to = Math.max(t.lastIndexOf(']'), t.lastIndexOf('}'));
+    if (from < 0 || to < from) return null;
+    try { return JSON.parse(t.slice(from, to+1).replace(/,\s*([\]}])/g,'$1')); }
+    catch { return null; }
+  },
+  /** header row + delimited rows (tab, comma, semicolon or 2+ spaces) */
+  parseTable(txt){
+    const lines = txt.trim().split(/\r?\n/).filter(l => l.trim());
+    const cut = l => l.trim().split(/\t|\s*[,;|]\s*|\s{2,}/);
+    const head = cut(lines[0]).map(h => h.toLowerCase().replace(/[^a-z0-9]/g,''));
+    if (!head.includes('time')) throw new Error('the first line must be a header row including "time"');
+    return lines.slice(1).map(l => {
+      const c = cut(l), o = {};
+      head.forEach((h,j) => { if (c[j] !== undefined) o[h] = c[j]; });
+      return o;
+    });
+  },
+  /** take whatever the model replied with and put it into the form */
+  importAny(txt){
+    if (!String(txt).trim()) throw new Error('nothing to import');
+    const rows = r => Array.isArray(r) && r.some(x => x && typeof x === 'object' && (x.time || x.Time));
+    let p = SASA.extract(txt);
+
+    if (rows(p)) return { kind:'chart', r: SASA.fromRows(p) };
+
+    if (p && typeof p === 'object' && !Array.isArray(p)){
+      const nested = Object.values(p).find(rows);              // {"observations":[…]}
+      if (nested) return { kind:'chart', r: SASA.fromRows(nested) };
+      const merged = deepMerge(SASA.data(), p);                // a whole-form payload
+      SASA.fill(merged);
+      return { kind:'form', n: leaves(p) };
+    }
+
+    return { kind:'chart', r: SASA.fromRows(SASA.parseTable(txt)) };   // pasted table
+  },
+  /** read the panel and report what landed */
   importTable(){
     const txt = $('io').value.trim();
-    if (!txt){ $('io').style.display = 'block'; return note('Paste a JSON array or a table with a header row, then press Import table.'); }
-    let rows, r;
-    try { rows = txt[0] === '[' ? JSON.parse(txt) : SASA.parseTable(txt); }
-    catch(e){ return note('Could not read that: ' + e.message); }
-    try { r = SASA.fromRows(rows); } catch(e){ return note(e.message); }
+    $('io').style.display = 'block';
+    if (!txt){ $('io').focus(); return note('Paste the reply from the vision model, then press Import.'); }
+    let out;
+    try { out = SASA.importAny(txt); } catch(e){ return note('Could not read that: ' + e.message); }
+    if (out.kind === 'form') return note(`${out.n} field(s) populated — check every figure against the source before signing.`);
+    const r = out.r;
     note(`${r.placed} row(s) charted`
        + (r.skipped.length ? ` · ${r.skipped.length} outside the grid (${r.skipped.slice(0,4).join(', ')})` : '')
        + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
-       + ' — check every figure against the source before signing.');
+       + (r.placed ? ' — check every figure against the source before signing.' : ''));
   },
   show(o){ live = false; const t = $('io'); t.style.display = 'block'; t.value = JSON.stringify(o, null, 2); },
   apply(){
@@ -924,6 +966,13 @@ const SERIES = { hr:'hr', pulse:'hr', heartrate:'hr', sys:'sys', systolic:'sys',
   temperature:'temp', cvp:'cvp', urine:'urine', bloodloss:'bloodLoss', fluids:'fluids',
   vapour:'vapour', vapor:'vapour', gas:'gas' };
 const hm = v => { const [a,b] = String(v).trim().split(':'); return (+a)*60 + (+b); };
+const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+/** overlay b onto a without discarding branches b doesn't mention */
+const deepMerge = (a,b) => {
+  for (const k in b) a[k] = isObj(b[k]) ? deepMerge(isObj(a[k]) ? a[k] : {}, b[k]) : b[k];
+  return a;
+};
+const leaves = o => Object.values(o).reduce((n,v) => n + (isObj(v) ? leaves(v) : 1), 0);
 const note = m => { $('msg').textContent = m; };
 
 /* live mirror: the panel reflects the form on every keystroke, tick and plot */

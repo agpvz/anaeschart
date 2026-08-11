@@ -82,8 +82,18 @@ Header names are normalised, so `HR`/`Pulse`/`Heart Rate` all reach the same ser
 as do `SpO2`/`sao2`/`Sats`. `"128/74"` splits into systolic and diastolic. Rows whose
 times fall outside the grid are reported in `skipped`, never dropped silently.
 
-The **Import table** button reads the panel as either a JSON array or a pasted table
-(tab, comma, semicolon, pipe or 2+ spaces as separators).
+The **Import** button reads the panel and works out what you pasted. It accepts a
+vision model's reply as-is — code fences, a preamble, trailing commentary, smart
+quotes and trailing commas are all tolerated — and dispatches on shape:
+
+| pasted | result |
+|---|---|
+| array of rows with `time` | charted via `fromRows()` |
+| `{"observations":[…]}` and similar wrappers | the nested array is charted |
+| a whole-form object | merged into the current form via `fill()` |
+| a delimited table with a header row | parsed, then charted |
+
+`SASA.importAny(text)` is the same logic without the UI.
 
 `docs/vitals-photo-extraction-prompt.md` is a prompt for transcribing a photographed
 vitals table into exactly this shape.
