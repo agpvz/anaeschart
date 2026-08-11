@@ -137,17 +137,27 @@ Static — any host works. For Cloudflare Pages:
 wrangler pages deploy . --project-name sasaform
 ```
 
-## Provenance
+## Copyright
 
-The layout, wording and structure of the form are the South African Society of
-Anaesthesiologists' (SASA Anaesthesia Form / Narkosevorm, v2020). This repository is a
-digital re-implementation of that form, not an original work.
+The SASA Anaesthesia Form / Narkosevorm (v2020) — its layout, structure, field
+arrangement and bilingual clause wording — is **© South African Society of
+Anaesthesiologists (SASA)**. All rights in the form, the SASA name and the SASA logo
+remain with SASA.
 
-The SASA mark in `index.html` is a drawn approximation standing in for the official
-asset — see the `logo` template string near the top of the script.
+This repository is an **unofficial digital implementation** of that form. It is not
+published, endorsed, certified, approved by, or affiliated with SASA. The SASA mark
+drawn in `index.html` is an approximation standing in for the official asset — replace
+it with the official asset or remove it before any distribution.
 
-Confirm SASA's position on redistribution before making this repository public.
+Reproducing and distributing SASA's form requires SASA's permission. Obtain it before
+making this repository public, deploying it beyond your own practice, or sharing the
+file with other practitioners.
+
+The attribution appears in the source header of `index.html`, in its `copyright` meta
+tag, on screen above the form, and in the `_form` block of every exported JSON case, so
+a file that travels keeps its provenance. See `NOTICE.md`.
 
 ## Licence
 
-None chosen yet. Without one, default copyright applies and nobody may reuse it.
+None chosen. Without one, default copyright applies to the code — and SASA's rights in
+the form apply regardless of what licence the code carries.

@@ -1,9 +1,24 @@
 <!DOCTYPE html>
+<!--
+  SASA Anaesthesia Form / Narkosevorm
+
+  The form itself — its layout, structure, clause wording and bilingual content —
+  is © South African Society of Anaesthesiologists (SASA), form version 2020.
+  All rights in the form, the SASA name and the SASA logo remain with SASA.
+
+  This file is an unofficial digital implementation of that form, produced for
+  practice use. It is not published, endorsed, certified or approved by SASA.
+  The SASA mark drawn in the script below is an approximation standing in for the
+  official asset, not the official mark itself.
+
+  Do not redistribute without SASA's permission.
+-->
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="copyright" content="Form © South African Society of Anaesthesiologists (SASA). Unofficial digital implementation.">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SASA Anaesthesia Form / Narkosevorm</title>
+<title>SASA Anaesthesia Form / Narkosevorm — unofficial digital implementation</title>
 <style>
 :root{
   --g:#00a651;            /* SASA green - rules, labels */
@@ -164,6 +179,10 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
   <button type="button" onclick="SASA.savePDF()">Save PDF</button>
   <span style="opacity:.7">chart: pick HR or Blood pressure, then click to plot — two clicks in a column give systolic and diastolic</span>
   <span id="msg" style="opacity:.85"></span>
+  <div style="width:100%;opacity:.75;font-size:8pt;line-height:1.35">
+    Form © South African Society of Anaesthesiologists (SASA), v2020 — layout, structure and clause
+    wording are SASA's. Unofficial digital implementation, not endorsed by or affiliated with SASA.
+  </div>
   <textarea id="io" spellcheck="false" placeholder="Paste the reply from the vision model here — JSON, a table, or the whole reply with its commentary — then press Import."></textarea>
 </div>
 
@@ -812,7 +831,9 @@ const kind = e => e.type === 'checkbox' ? 'boolean'
 const SASA = {
   /** current form state as a nested object (empty fields omitted) */
   data(){
-    const o = {};
+    const o = { _form: { name: 'SASA Anaesthesia Form / Narkosevorm', version: '2020',
+      copyright: '© South African Society of Anaesthesiologists (SASA)',
+      note: 'Unofficial digital implementation, not endorsed by SASA.' } };
     for (const e of fields()){
       if (e.type === 'checkbox'){ if (e.checked) set(o, e.name, true); }
       else if (e.type === 'radio'){ if (e.checked) set(o, e.name, e.value); }
