@@ -101,6 +101,34 @@ vitals table into exactly this shape.
 **Transcription is a draft.** Read every figure back against the source before the
 record is signed, and keep the source image with the case.
 
+## Saving a case
+
+**Save HTML** writes one self-contained file: the whole form, filled, with no external
+assets. State is embedded as JSON in a `#preload` block, so reopening the file rebuilds
+the chart and every field offline. It stays live — editable, re-exportable, and
+`SASA.data()` still returns the case.
+
+**Save PDF** opens the browser print dialog. The browser's own print engine renders the
+same CSS at the same A4 landscape size, so the PDF is identical to the screen. Set:
+
+- Destination — Save as PDF
+- Margins — None
+- Scale — 100% (not "Fit to page")
+- Background graphics — **on** (without it the green rules and tints vanish)
+
+For automation, `tools/export-pdf.mjs` drives the same engine headlessly:
+
+```sh
+npm i -D playwright && npx playwright install chromium
+node tools/export-pdf.mjs index.html case.json case.pdf
+```
+
+`printBackground` and `preferCSSPageSize` are what keep it faithful — the first keeps
+the rules and tints, the second honours `@page { size: A4 landscape; margin: 0 }`.
+
+Rasterising libraries (html2canvas, jsPDF) are deliberately not used: they re-implement
+layout and drift on millimetre units, print colour and page breaks.
+
 ## Deploying
 
 Static — any host works. For Cloudflare Pages:

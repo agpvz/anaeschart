@@ -145,6 +145,7 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
   .tcell.hot span{background:transparent}
   body{background:#fff}
   .sheet{margin:0;box-shadow:none;page-break-after:always}
+  .sheet:last-of-type{page-break-after:auto}
   input:focus,textarea:focus{background:transparent}
   @page{size:A4 landscape;margin:0}
 }
@@ -159,7 +160,8 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
   <button type="button" onclick="SASA.importTable()">Import</button>
   <button type="button" onclick="SASA.show(SASA.schema())">Field map</button>
   <button type="button" onclick="SASA.fill({})">Clear</button>
-  <button type="button" onclick="print()">Print</button>
+  <button type="button" onclick="SASA.saveHTML()">Save HTML</button>
+  <button type="button" onclick="SASA.savePDF()">Save PDF</button>
   <span style="opacity:.7">chart: pick HR or Blood pressure, then click to plot — two clicks in a column give systolic and diastolic</span>
   <span id="msg" style="opacity:.85"></span>
   <textarea id="io" spellcheck="false" placeholder="Paste the reply from the vision model here — JSON, a table, or the whole reply with its commentary — then press Import."></textarea>
@@ -496,7 +498,7 @@ BESONDERHEDE</div>
 
 </form>
 
-<script>
+<script id="app">
 "use strict";
 const COLS = 30;
 const $ = id => document.getElementById(id);
@@ -951,6 +953,38 @@ const SASA = {
        + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
        + (r.placed ? ' — check every figure against the source before signing.' : ''));
   },
+  /** filename stem from whoever the case belongs to */
+  stem(){
+    const d = SASA.data();
+    const bits = [d.patient?.surname, d.patient?.firstNames, d.case?.date || d.record?.date]
+      .filter(Boolean).join('-').replace(/[^\w\-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
+    return ('sasa-form' + (bits ? '-' + bits : '')).toLowerCase();
+  },
+  /** the whole form, filled, as one self-contained file — no server, no assets */
+  saveHTML(){
+    const clone = document.documentElement.cloneNode(true);
+    clone.querySelector('#io').textContent = '';
+    clone.querySelector('#msg').textContent = '';
+    clone.querySelector('#preload')?.remove();
+    const state = document.createElement('script');   // read back by the app on load
+    state.id = 'preload';
+    state.type = 'application/json';
+    state.textContent = JSON.stringify(SASA.data());
+    const body = clone.querySelector('body');
+    body.insertBefore(state, clone.querySelector('#app'));
+    const blob = new Blob(['<!DOCTYPE html>\n' + clone.outerHTML], {type:'text/html'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = SASA.stem() + '.html';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    note('Saved — the file opens filled in, offline, with the chart and JSON intact.');
+  },
+  /** PDF via the browser's own print engine, so the rendering is identical */
+  savePDF(){
+    note('In the print dialog: Destination "Save as PDF", Margins "None", Scale 100%, Background graphics ON.');
+    setTimeout(print, 60);
+  },
   show(o){ live = false; const t = $('io'); t.style.display = 'block'; t.value = JSON.stringify(o, null, 2); },
   apply(){
     const was = live; live = false;
@@ -959,6 +993,13 @@ const SASA = {
   }
 };
 window.SASA = SASA;
+
+/* a saved copy carries its state in #preload; the app rebuilds, then fills */
+const preload = $('preload');
+if (preload){
+  try { SASA.fill(JSON.parse(preload.textContent)); }
+  catch(e){ note('Saved state could not be read: ' + e.message); }
+}
 
 /* column series an imported table can address */
 const SERIES = { hr:'hr', pulse:'hr', heartrate:'hr', sys:'sys', systolic:'sys', dia:'dia', diastolic:'dia',
