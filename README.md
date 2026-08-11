@@ -139,25 +139,23 @@ wrangler pages deploy . --project-name sasaform
 
 ## Copyright
 
-The SASA Anaesthesia Form / Narkosevorm (v2020) — its layout, structure, field
-arrangement and bilingual clause wording — is **© South African Society of
-Anaesthesiologists (SASA)**. All rights in the form, the SASA name and the SASA logo
-remain with SASA.
+Two distinct sets of rights, neither affecting the other.
 
-This repository is an **unofficial digital implementation** of that form. It is not
-published, endorsed, certified, approved by, or affiliated with SASA. The SASA mark
-drawn in `index.html` is an approximation standing in for the official asset — replace
-it with the official asset or remove it before any distribution.
+**Software — © 2026 A.G.P. van Zyl. All rights reserved.** The code and functionality
+are the author's own work: the field mapping and JSON contract, the interactive vitals
+chart, the time axis, the observation-table import, and the HTML/PDF export. No licence
+is granted.
 
-Reproducing and distributing SASA's form requires SASA's permission. Obtain it before
-making this repository public, deploying it beyond your own practice, or sharing the
-file with other practitioners.
+**Form content — © South African Society of Anaesthesiologists (SASA), v2020.** The
+layout, structure, field arrangement and bilingual clause wording are SASA's, as are
+the SASA name and logo. This is an unofficial implementation, not endorsed by or
+affiliated with SASA. The SASA mark in `index.html` is an approximation standing in for
+the official asset — replace or remove it before any distribution.
 
-The attribution appears in the source header of `index.html`, in its `copyright` meta
-tag, on screen above the form, and in the `_form` block of every exported JSON case, so
-a file that travels keeps its provenance. See `NOTICE.md`.
+Distributing the form content requires SASA's permission; obtain it before making this
+repository public or sharing the file beyond your own practice. The software rights are
+unaffected by that answer.
 
-## Licence
-
-None chosen. Without one, default copyright applies to the code — and SASA's rights in
-the form apply regardless of what licence the code carries.
+Both notices travel with the work: the source header of `index.html`, its `copyright`
+and `author` meta tags, the strip above the form, and the `_meta` block of every
+exported JSON case. See `NOTICE.md`.
