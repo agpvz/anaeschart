@@ -97,7 +97,17 @@ quotes and trailing commas are all tolerated — and dispatches on shape:
 `SASA.importAny(text)` is the same logic without the UI.
 
 `docs/vitals-photo-extraction-prompt.md` is a prompt for transcribing a photographed
-vitals table into exactly this shape.
+vitals table into exactly this shape. `docs/form-extraction-prompt.md` covers everything
+else — demographics, medical aid, case detail, technique, monitoring and the Section D
+history — and returns a nested object that the same **Import** button merges in.
+`docs/schema.json` is the machine-generated field list both prompts are built from:
+
+```js
+JSON.stringify(SASA.schema(), null, 2)   // regenerate after adding fields
+```
+
+Imports merge, so a demographics photo, a history photo and the vitals table can be
+imported one after another without clearing each other.
 
 **Transcription is a draft.** Read every figure back against the source before the
 record is signed, and keep the source image with the case.

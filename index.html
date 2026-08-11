@@ -541,8 +541,11 @@ const $ = id => document.getElementById(id);
 const form = $('form');
 
 /* ── tiny helpers ────────────────────────────────────────────── */
+/* a path segment is an array index only if it is a small canonical integer:
+   column 0-29 and agents 0-7 are arrays, billing codes like 0039 or 1204 are keys */
+const idx = k => /^(0|[1-9]\d?)$/.test(k);
 const set = (o,p,v) => { const k=p.split('.'); let a=o;
-  k.forEach((c,i)=>{ if(i===k.length-1) a[c]=v; else a = a[c] ??= (/^\d+$/.test(k[i+1])?[]:{}); }); };
+  k.forEach((c,i)=>{ if(i===k.length-1) a[c]=v; else a = a[c] ??= (idx(k[i+1])?[]:{}); }); };
 const get = (o,p) => p.split('.').reduce((a,c)=>a==null?a:a[c], o);
 const inp = (n,extra='') => `<input name="${n}" ${extra}>`;
 const cells = n => `<div class="cells">${Array.from({length:COLS},(_,i)=>inp(n+'.'+i)).join('')}</div>`;
