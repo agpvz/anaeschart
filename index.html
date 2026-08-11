@@ -405,7 +405,7 @@ COST ESTIMATE:</span><input class="grow" name="account.costEstimate">
     <div class="bx" style="padding:0">
       <div class="row" style="border-bottom:var(--bw) solid var(--g)">
         <div style="width:20mm;border-right:var(--bw) solid var(--g)"><span class="l">Date</span><input type="date" name="record.date"></div>
-        <div style="width:18mm;border-right:var(--bw) solid var(--g)"><span class="l">Height(cm)</span><input type="number" step="0.1" min="0" inputmode="decimal" name="record.heightCm"></div>
+        <div style="width:18mm;border-right:var(--bw) solid var(--g)"><span class="l">Height(cm)</span><input type="number" step="any" min="0" inputmode="decimal" name="record.heightCm"></div>
         <div class="grow" style="border-right:var(--bw) solid var(--g)">
           <span class="l">Pre-operative airway assessment</span>
           <div class="row"><span class="l">Mouth opening:</span><input class="grow" name="record.mouthOpening">
@@ -818,7 +818,7 @@ $('histRows').innerHTML = HIST.map(([k,en,af]) => {
     `<div class="qd" style="gap:.6mm"><span class="l">Weight:
 Gewig:</span>${inp('history.weightKg','type="number" step="0.1" min="0" inputmode="decimal"')}<span class="l">Kg</span>
      <span class="l">Height:
-Lengte:</span>${inp('history.heightM','type="number" step="0.01" min="0" inputmode="decimal"')}<span class="l">M</span>
+Lengte:</span>${inp('history.heightM','type="number" step="any" min="0" inputmode="decimal"')}<span class="l">M</span>
      <span style="color:#e33;font-weight:700">❗</span></div>`;
   if (k === 'reflux') details =
     `<div class="qd" style="flex-direction:column;justify-content:center;align-items:stretch">
@@ -1051,6 +1051,20 @@ const deepMerge = (a,b) => {
 };
 const leaves = o => Object.values(o).reduce((n,v) => n + (isObj(v) ? leaves(v) : 1), 0);
 const note = m => { $('msg').textContent = m; };
+
+/* height takes either unit — 178 or 1.78 — and settles into the one the field is
+   labelled in. Anything under 3 read as metres, anything over 3 read as cm. */
+[['record.heightCm','cm'], ['history.heightM','m']].forEach(([name,unit]) => {
+  const f = el(name);
+  f.addEventListener('change', () => {
+    let v = parseFloat(f.value);
+    if (!isFinite(v) || v <= 0) return;
+    if (unit === 'cm' && v < 3) v *= 100;
+    if (unit === 'm'  && v > 3) v /= 100;
+    f.value = unit === 'cm' ? Math.round(v*10)/10 : Math.round(v*100)/100;
+    sync();
+  });
+});
 
 /* live mirror: the panel reflects the form on every keystroke, tick and plot */
 let live = false;
