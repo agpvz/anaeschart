@@ -83,7 +83,14 @@ Header names are normalised, so `HR`/`Pulse`/`Heart Rate` all reach the same ser
 as do `SpO2`/`sao2`/`Sats`. `"128/74"` splits into systolic and diastolic. Rows whose
 times fall outside the grid are reported in `skipped`, never dropped silently.
 
-The **Import** button reads the panel and works out what you pasted. It accepts a
+Paste into the panel and the form follows as soon as the text parses — **auto-apply**
+is on by default and can be switched off, in which case **Apply now** does it on
+demand. Half-typed JSON is ignored rather than reported as an error. Applying stops the
+panel mirroring the form back out, so the two never fight; press **Live JSON** to
+resume mirroring. **Replace all** is the destructive alternative: it fills from the
+pasted object and clears anything the object doesn't mention.
+
+Apply reads the panel and works out what you pasted. It accepts a
 vision model's reply as-is — code fences, a preamble, trailing commentary, smart
 quotes and trailing commas are all tolerated — and dispatches on shape:
 

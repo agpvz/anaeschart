@@ -187,8 +187,11 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
 <div id="bar">
   <strong>SASA form</strong>
   <button type="button" onclick="SASA.watch()">Live JSON</button>
-  <button type="button" onclick="SASA.apply()">Apply JSON</button>
-  <button type="button" onclick="SASA.importTable()">Import</button>
+  <button type="button" onclick="SASA.importTable()">Apply now</button>
+  <button type="button" onclick="SASA.apply()">Replace all</button>
+  <label style="display:flex;align-items:center;gap:.5mm;font-size:8.5pt">
+    <input type="checkbox" id="auto" checked style="width:auto;accent-color:#00a651"> auto-apply
+  </label>
   <button type="button" onclick="SASA.show(SASA.schema())">Field map</button>
   <button type="button" onclick="SASA.fill({})">Clear</button>
   <button type="button" onclick="SASA.saveHTML()">Save HTML</button>
@@ -1005,15 +1008,10 @@ const SASA = {
   importTable(){
     const txt = $('io').value.trim();
     $('io').style.display = 'block';
-    if (!txt){ $('io').focus(); return note('Paste the reply from the vision model, then press Import.'); }
+    if (!txt){ $('io').focus(); return note('Paste the reply from the vision model, then press Apply now.'); }
     let out;
     try { out = SASA.importAny(txt); } catch(e){ return note('Could not read that: ' + e.message); }
-    if (out.kind === 'form') return note(`${out.n} field(s) populated — check every figure against the source before signing.`);
-    const r = out.r;
-    note(`${r.placed} row(s) charted`
-       + (r.skipped.length ? ` · ${r.skipped.length} outside the grid (${r.skipped.slice(0,4).join(', ')})` : '')
-       + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
-       + (r.placed ? ' — check every figure against the source before signing.' : ''));
+    report(out);
   },
   /** filename stem from whoever the case belongs to */
   stem(){
@@ -1077,6 +1075,33 @@ const deepMerge = (a,b) => {
 };
 const leaves = o => Object.values(o).reduce((n,v) => n + (isObj(v) ? leaves(v) : 1), 0);
 const note = m => { $('msg').textContent = m; };
+/** say what an import did, in the same words however it was triggered */
+function report(out){
+  if (out.kind === 'form')
+    return note(`${out.n} field(s) populated — check every figure against the source before signing.`);
+  const r = out.r;
+  note(`${r.placed} row(s) charted`
+     + (r.skipped.length ? ` · ${r.skipped.length} outside the grid (${r.skipped.slice(0,4).join(', ')})` : '')
+     + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
+     + (r.placed ? ' — check every figure against the source before signing.' : ''));
+}
+
+/* paste or type JSON into the panel and the form follows, once the text parses.
+   Applying stops the panel mirroring back out, so the two never fight. */
+let pending, applied = '';
+function autoApply(delay){
+  clearTimeout(pending);
+  pending = setTimeout(() => {
+    if (!$('auto').checked) return;
+    const txt = $('io').value.trim();
+    if (!txt || txt === applied) return;
+    let out;
+    try { out = SASA.importAny(txt); }
+    catch { return note('waiting for valid JSON…'); }
+    applied = txt;
+    report(out);
+  }, delay);
+}
 
 /* height takes either unit — 178 or 1.78 — and settles into the one the field is
    labelled in. Anything under 3 read as metres, anything over 3 read as cm. */
@@ -1112,6 +1137,8 @@ function sync(){
 }
 form.addEventListener('input', sync);
 form.addEventListener('change', sync);
+$('io').addEventListener('input', () => { live = false; autoApply(400); });
+$('io').addEventListener('paste', () => { live = false; autoApply(30); });
 </script>
 </body>
 </html>
