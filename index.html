@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SASA Anaesthesia Form / Narkosevorm</title>
+<style>
+:root{
+  --g:#00a651;            /* SASA green - rules, labels */
+  --gd:#00843d;           /* darker green - headings */
+  --gl:#d9f0e2;           /* tint fills */
+  --ink:#12356b;          /* entered data ("pen") */
+  --bw:.35mm;             /* rule weight */
+  --r:1.6mm;              /* corner radius */
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:#dfe4e8}
+body{font-family:"Arial Narrow","Liberation Sans Narrow",Arial,Helvetica,sans-serif;color:var(--gd);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+form{display:block}
+
+/* ---------- sheet ---------- */
+.sheet{width:297mm;height:210mm;background:#fff;margin:6mm auto;padding:2.5mm;display:grid;
+  grid-template-columns:1fr 1fr;gap:2.5mm;position:relative;box-shadow:0 1mm 4mm #0003;overflow:hidden}
+.col{display:flex;flex-direction:column;gap:.8mm;min-width:0}
+
+/* ---------- primitives ---------- */
+.bx{border:var(--bw) solid var(--g);border-radius:var(--r);padding:.3mm .8mm;position:relative;min-height:4.2mm}
+.row{display:flex;align-items:center;gap:1mm}
+.grow{flex:1;min-width:0}
+.l{font-size:4.6pt;font-weight:700;line-height:1.02;white-space:pre-line;flex:none}
+.l2{font-size:4.1pt;font-weight:700;line-height:1.02;white-space:pre-line;flex:none}
+.sec{font-size:8pt;font-weight:700;letter-spacing:.2px}
+.tiny{font-size:3.8pt;font-weight:700}
+.ctr{text-align:center}
+.flag{display:inline-flex;align-items:center;gap:.8mm;font-size:11pt;font-weight:700;line-height:1}
+.flag b{font-size:12pt}
+
+input,textarea{font:inherit;font-size:7pt;color:var(--ink);border:0;background:transparent;outline:0;
+  width:100%;padding:0 .4mm;min-width:0;font-family:Arial,Helvetica,sans-serif}
+textarea{resize:none;line-height:1.15}
+input:focus,textarea:focus{background:#dbeeff}
+input[type=checkbox],input[type=radio]{width:auto;accent-color:var(--g);margin:0}
+input::-webkit-calendar-picker-indicator{opacity:.35}
+
+/* checkbox / radio chrome */
+.cb{display:flex;align-items:flex-start;gap:.7mm;font-size:4.6pt;font-weight:700;line-height:1.15}
+.cb input{width:1.9mm;height:1.9mm;flex:none;margin-top:.2mm}
+.ynbox{width:6mm;height:4mm;border:var(--bw) solid var(--g);border-radius:2mm;background:var(--gl);
+  display:flex;align-items:center;justify-content:center;flex:none}
+.ynbox input{width:2.2mm;height:2.2mm;border-radius:50%}
+
+/* ---------- header ---------- */
+.hdr{display:flex;align-items:center;justify-content:space-between;gap:2mm}
+.title{font-size:16.5pt;font-weight:700;color:var(--g);letter-spacing:.4px;transform:scaleX(1.06);transform-origin:left}
+.title.r{transform-origin:right}
+
+/* ---------- clauses ---------- */
+.clause{font-size:4.5pt;line-height:1.16;margin:0 0 .35mm;text-indent:-3.4mm;padding-left:3.4mm}
+.clause b{font-weight:700}
+.declare{font-size:4pt;font-style:italic;line-height:1.14;font-weight:700}
+
+/* ---------- watermark ---------- */
+.wm{position:absolute;right:8mm;top:24mm;font-size:80mm;line-height:.8;color:var(--g);opacity:.09;
+  font-weight:700;pointer-events:none;user-select:none}
+
+/* ---------- ID number cells ---------- */
+.idno{--cell:4.4mm;font-family:"Courier New",monospace;font-size:7.5pt;letter-spacing:calc(var(--cell) - 1ch);
+  text-indent:calc((var(--cell) - 1ch)/2);width:calc(13 * var(--cell));
+  background:repeating-linear-gradient(90deg,transparent 0 calc(var(--cell) - var(--bw)),var(--g) calc(var(--cell) - var(--bw)) var(--cell));
+  background-size:100% 100%;border:var(--bw) solid var(--g);border-radius:.6mm;height:4mm}
+
+/* ---------- VR / billing block ---------- */
+.vr{display:grid;grid-template-columns:5mm 1fr 24mm;gap:.8mm;flex:1;min-height:0}
+.vlab{border:var(--bw) solid var(--g);border-radius:var(--r);display:flex;flex-direction:column;
+  align-items:center;justify-content:space-around;padding:1mm 0}
+.vlab span{writing-mode:vertical-rl;transform:rotate(180deg);font-size:4.6pt;font-weight:700;white-space:nowrap}
+.codes{display:grid;grid-template-columns:1fr 1fr;gap:.5mm;align-content:start}
+.code{display:flex;align-items:center;gap:.5mm;border:var(--bw) solid var(--g);border-radius:.8mm;
+  padding:.1mm .5mm;font-size:4.6pt;font-weight:700;justify-content:space-between}
+.code input[type=checkbox]{width:1.7mm;height:1.7mm}
+.sticker{border:var(--bw) solid var(--g);border-radius:var(--r);flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:.6mm;text-align:center;padding:2mm}
+.sticker .big{font-size:11pt;font-weight:700;letter-spacing:.5px}
+.sticker .sub{font-size:6.5pt;font-weight:700}
+
+/* ---------- anaesthesia record ---------- */
+.rec{display:grid;grid-template-columns:24mm 1fr;gap:.8mm;flex:1;min-height:0}
+.tech{display:flex;flex-direction:column;gap:.4mm}
+.techgrp{border:var(--bw) solid var(--g);border-radius:var(--r);padding:.5mm .7mm;display:flex;flex-direction:column;gap:.35mm}
+.ind{padding-left:2.2mm}
+.ind2{padding-left:4.4mm}
+.mini{font-size:4.4pt;font-weight:700;display:flex;align-items:center;gap:.4mm}
+.mini input[type=text]{border-bottom:var(--bw) solid var(--g);font-size:5.5pt}
+
+.crow{display:grid;grid-template-columns:17mm 4mm 1fr 4mm;align-items:stretch;min-height:2.7mm}
+.clbl{font-size:4.4pt;font-weight:700;display:flex;align-items:center;padding-right:.5mm;line-height:1.05}
+.cells{display:grid;grid-template-columns:repeat(30,1fr);border-left:var(--bw) solid var(--g)}
+.cells.t{height:2.9mm}
+.cells input{border-right:var(--bw) dotted var(--g);border-bottom:var(--bw) solid var(--g);font-size:4.6pt;
+  text-align:center;height:100%;padding:0}
+.tcell{border-right:var(--bw) dotted var(--g);border-bottom:var(--bw) solid var(--g);
+  position:relative;overflow:visible;min-width:0;
+  font-size:4pt;font-weight:700;color:var(--g);line-height:1}
+.tcell span{position:absolute;left:0;top:50%;transform:translate(-50%,-50%);white-space:nowrap}
+.tcell.hr{font-size:5.4pt;color:var(--gd)}
+.tcell.hot{font-size:5pt;color:#c2410c}
+.tcell.hot span{background:#fff2e6;padding:0 .3mm;border-radius:.4mm}
+.tstep{width:auto;font:inherit;font-size:4.4pt;font-weight:700;color:var(--gd);background:transparent;
+  border:var(--bw) solid var(--g);border-radius:.6mm;padding:0}
+.tcell.hr{font-size:5.4pt;color:var(--gd)}
+.tcell.hot{font-size:5pt;color:#c2410c;background:#fff2e6}
+#xh{pointer-events:none}
+.tstart{width:13mm;font-size:5pt;border-bottom:var(--bw) solid var(--g);padding:0;text-align:center}
+.tstart::-webkit-calendar-picker-indicator{display:none}
+.ax{display:flex;flex-direction:column;justify-content:space-between;font-size:4pt;font-weight:700;
+  align-items:center;padding:.2mm 0}
+.gwrap{border:var(--bw) solid var(--g);border-left:var(--bw) solid var(--g)}
+#g{display:block;width:100%;height:32mm;cursor:crosshair}
+.trace{display:flex;align-items:center;gap:.5mm;font-size:4.3pt;font-weight:700}
+.trace input{width:1.7mm;height:1.7mm}
+
+/* ---------- section D ---------- */
+.qrow{display:grid;grid-template-columns:1fr 6.6mm 6.6mm 1fr;gap:.6mm;align-items:stretch}
+.q{border:var(--bw) solid var(--g);border-radius:var(--r);padding:.2mm .8mm;font-size:4.5pt;font-weight:700;
+  line-height:1.1;display:flex;flex-direction:column;justify-content:center}
+.q .af{font-weight:700}
+.qd{border:var(--bw) solid var(--g);border-radius:var(--r);display:flex;align-items:center;padding:0 .5mm}
+.yn{display:flex;align-items:center;justify-content:center}
+.yncell{width:100%;height:100%;border:var(--bw) solid var(--g);border-radius:3mm;background:var(--gl);
+  display:flex;align-items:center;justify-content:center}
+.yncell input{width:2.4mm;height:2.4mm;border-radius:50%}
+
+/* ---------- toolbar (screen only) ---------- */
+#bar{position:sticky;top:0;z-index:9;background:#12352a;color:#fff;padding:2mm 3mm;display:flex;
+  gap:2mm;align-items:center;flex-wrap:wrap;font-family:Arial,sans-serif;font-size:9pt}
+#bar button{font:inherit;font-size:8.5pt;padding:1mm 2.5mm;border:0;border-radius:1mm;background:#00a651;
+  color:#fff;cursor:pointer}
+#bar button:hover{background:#00c060}
+#io{width:100%;height:26mm;font-family:"Courier New",monospace;font-size:8pt;display:none;margin-top:2mm;
+  color:#000;padding:1mm}
+@media print{
+  #bar{display:none}
+  #xh,#xhv{display:none}
+  .tcell.hot{font-size:4pt;color:var(--g)}
+  .tcell.hot span{background:transparent}
+  body{background:#fff}
+  .sheet{margin:0;box-shadow:none;page-break-after:always}
+  input:focus,textarea:focus{background:transparent}
+  @page{size:A4 landscape;margin:0}
+}
+</style>
+</head>
+<body>
+
+<div id="bar">
+  <strong>SASA form</strong>
+  <button type="button" onclick="SASA.watch()">Live JSON</button>
+  <button type="button" onclick="SASA.apply()">Apply JSON</button>
+  <button type="button" onclick="SASA.importTable()">Import table</button>
+  <button type="button" onclick="SASA.show(SASA.schema())">Field map</button>
+  <button type="button" onclick="SASA.fill({})">Clear</button>
+  <button type="button" onclick="print()">Print</button>
+  <span style="opacity:.7">chart: pick HR or Blood pressure, then click to plot — two clicks in a column give systolic and diastolic</span>
+  <span id="msg" style="opacity:.85"></span>
+  <textarea id="io" spellcheck="false"></textarea>
+</div>
+
+<form id="form" onsubmit="return false">
+
+<!-- ══════════════════ SHEET 1 ══════════════════ -->
+<div class="sheet">
+
+  <!-- ---------- LEFT: SECTION A ---------- -->
+  <div class="col">
+    <div class="hdr">
+      <div class="title">ANAESTHESIA FORM</div>
+      <div id="logo1"></div>
+      <div class="title r">NARKOSEVORM</div>
+    </div>
+    <div class="tiny" style="line-height:1.25">
+      LEES ASSEBLIEF AFDELINGS A, B, C, &amp; D, VUL GEGEWENS IN, TEKEN ONDER EN OORHANDIG AAN DIE NARKOTISEUR.<br>
+      <span style="font-size:5pt">L.W. AFDELING C MOET INGEVUL WORD DEUR DIE REKENINGPLIGTIGE</span><br>
+      PLEASE READ AND COMPLETE SECTIONS A, B, C, &amp; D, SIGN BELOW AND HAND TO THE ANAESTHESIOLOGIST.<br>
+      <span style="font-size:5pt">N.B.SECTION C. MUST BE COMPLETED BY THE PERSON RESPONSIBLE FOR THE ACCOUNT.</span>
+    </div>
+
+    <div class="row">
+      <span class="flag"><b>A</b>&#9654;</span>
+      <div class="tiny" style="text-decoration:underline;line-height:1.3">
+        OOREENKOMS TUSSEN DIE ANESTESIOLOOG EN PASIËNT<br>
+        AGREEMENT BETWEEN THE ANAESTHESIOLOGIST AND PATIENT
+      </div>
+    </div>
+
+    <div class="bx" style="flex:1;display:flex;flex-direction:column;padding:1mm">
+      <div class="tiny" style="text-decoration:underline;margin-bottom:.6mm">PASIËNT:</div>
+      <div id="clausesAf" style="flex:1"></div>
+      <div class="bx row" style="align-items:stretch;margin-top:.6mm">
+        <div class="declare grow">Ek het bostaande gelees, begryp en aanvaar die voorwaardes soos uiteengesit.
+          Ek verklaar dat ek by my volle verstand is ten tye van ondertekening en dat ek dit
+          uit vrye wil doen. Hiermee gee ek toestemming vir narkose vir myself of my afhanklike.</div>
+        <div style="width:34mm"><span class="l">GETEKEN:</span><input name="agreement.signedAf" style="border-bottom:var(--bw) solid var(--g)"></div>
+        <div style="width:24mm"><span class="l">DATUM:</span><input type="date" name="agreement.dateAf" style="border-bottom:var(--bw) solid var(--g)"></div>
+      </div>
+    </div>
+
+    <div class="bx" style="flex:1;display:flex;flex-direction:column;padding:1mm">
+      <div class="tiny" style="text-decoration:underline;margin-bottom:.6mm">PATIENT:</div>
+      <div id="clausesEn" style="flex:1"></div>
+      <div class="bx row" style="align-items:stretch;margin-top:.6mm">
+        <div class="declare grow">I have read, understood and agree to the conditions mentioned above. I declare that
+          I am of sound mind at the time of signing this agreement and that I am not under
+          duress. I hereby give permission for anaesthesia on myself or my dependant.</div>
+        <div style="width:34mm"><span class="l">SIGNED:</span><input name="agreement.signedEn" style="border-bottom:var(--bw) solid var(--g)"></div>
+        <div style="width:24mm"><span class="l">DATE:</span><input type="date" name="agreement.dateEn" style="border-bottom:var(--bw) solid var(--g)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------- RIGHT: SECTIONS B & C ---------- -->
+  <div class="col">
+    <div class="wm">C</div>
+
+    <div class="row" style="align-items:stretch">
+      <span class="flag"><b>B</b>&#9654;</span>
+      <div class="bx grow">
+        <div class="row">
+          <span class="l">PASIENT VAN :
+PATIENT SURNAME :</span>
+          <input class="grow" name="patient.surname">
+          <span class="l">GEB.DATUM:
+BIRTH DATE:</span>
+          <input type="date" name="patient.birthDate" style="width:26mm">
+        </div>
+        <div class="row" style="border-top:var(--bw) solid var(--g)">
+          <span class="l">VOLLE VOORNAME :
+FIRST NAMES :</span>
+          <input class="grow" name="patient.firstNames">
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <span class="flag"><b>C</b>&#9654;</span>
+      <span class="sec">PERSON RESPONSIBLE FOR ACCOUNT/MAIN MEMBER</span>
+    </div>
+
+    <div class="bx" style="padding:.6mm">
+      <div class="row">
+        <span class="l">MEDIESEFONDS :
+MED FUND :</span><input class="grow" name="account.medFund">
+        <span class="l">OPSIE:
+OPTION:</span><input style="width:22mm" name="account.option">
+        <span class="l">NOMMER :
+NUMBER :</span><input style="width:30mm" name="account.number">
+      </div>
+      <div class="row">
+        <span class="l">MAGTIGINGS No :
+AUTHORIZATION No :</span><input class="grow" name="account.authorizationNo">
+        <span class="l">GAPINGDEKKING:
+GAP COVER:</span><input style="width:34mm" name="account.gapCover">
+      </div>
+      <div class="row">
+        <span class="l">VAN :
+SURNAME :</span><input class="grow" name="account.surname">
+        <span class="l">TITEL :
+TITLE :</span><input style="width:16mm" name="account.title">
+        <span class="l">VOORLETTERS :
+INITIALS :</span><input style="width:16mm" name="account.initials">
+      </div>
+      <div class="row">
+        <span class="l">POSADRES :
+POSTAL ADDRESS :</span>
+        <div class="grow">
+          <input name="account.postalAddress1">
+          <input name="account.postalAddress2">
+        </div>
+        <span class="l">POS KODE :
+POSTAL CODE :</span><input style="width:18mm" name="account.postalCode">
+      </div>
+      <div class="row">
+        <span class="l">I.D. No :</span><input class="idno" name="account.idNo" maxlength="13" inputmode="numeric">
+        <span class="l">SEL:
+CEL:</span><input class="grow" name="account.cell">
+      </div>
+      <div class="row">
+        <span class="l">TEL HUIS :
+TEL HOME :</span><input class="grow" name="account.telHome">
+        <span class="l">TEL WERK :
+TEL WORK :</span><input class="grow" name="account.telWork">
+        <span class="l">FAKS :
+FAX :</span><input style="width:24mm" name="account.fax">
+      </div>
+      <div class="row" style="align-items:flex-start">
+        <span class="l">WOONADRES :
+RES. ADDRESS :</span>
+        <div class="grow"><input name="account.resAddress1"><input name="account.resAddress2"></div>
+        <div style="width:52mm">
+          <div class="row"><span class="l">WERKGEWER :
+EMPLOYER :</span><input class="grow" name="account.employer"></div>
+          <div class="row"><span class="l">ADRES :
+ADDRESS :</span><input class="grow" name="account.employerAddress"></div>
+          <div class="row"><span class="l2">epos:
+email:</span><input class="grow" name="account.email"></div>
+        </div>
+      </div>
+      <div class="row">
+        <span class="l">FAMILIE/VRIEND:
+FAMILY/FRIEND:</span><input class="grow" name="account.familyFriend">
+      </div>
+      <div class="row">
+        <span class="l">TEL:</span><input class="grow" name="account.familyFriendTel">
+        <span class="l" style="color:var(--g)">KOSTE BERAMING:
+COST ESTIMATE:</span><input class="grow" name="account.costEstimate">
+      </div>
+    </div>
+
+    <div class="ctr tiny" style="font-size:5.4pt;letter-spacing:.3px">FOR MORE INFORMATION VISIT WWW.SASAWEB.COM</div>
+
+    <!-- VR / billing block -->
+    <div class="vr">
+      <div class="vlab">
+        <span>Dr. No</span><span>Anaesthesiologist</span><span>No</span>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:.8mm;min-height:0">
+        <div class="bx row">
+          <span class="l">HOSPITAAL :</span><input class="grow" name="case.hospital">
+          <span style="font-size:9pt;font-weight:700;border:var(--bw) solid var(--g);border-radius:2mm;padding:0 1mm">VR</span>
+          <span class="l">DATUM:</span><input type="date" style="width:26mm" name="case.date">
+        </div>
+        <div class="bx row"><span class="l">CHIRURG :</span><input class="grow" name="case.surgeon"></div>
+        <div class="bx row">
+          <span class="l">PROSEDURE :</span><input class="grow" name="case.procedure">
+          <span class="l" style="font-size:7pt">KODE :</span><input style="width:22mm" name="case.code">
+        </div>
+        <div class="bx row">
+          <span class="l">NARKOSETYD : VAN :</span><input type="time" style="width:18mm" name="case.timeFrom">
+          <span class="l">TOT :</span><input type="time" style="width:18mm" name="case.timeTo">
+          <span class="l">MIN</span><input style="width:14mm" name="case.timeMin" inputmode="numeric">
+          <span class="l">ICD 10</span><input style="width:22mm" name="case.icd10">
+        </div>
+        <div class="bx row">
+          <span class="l">ASA</span><input style="width:12mm" name="case.asa">
+          <span class="l">0039</span><input type="checkbox" name="codes.0039" style="width:2mm;height:2mm">
+          <span class="l">MIN</span><input style="width:14mm" name="units.0039" inputmode="numeric">
+          <span class="l">543</span><input type="checkbox" name="codes.0543" style="width:2mm;height:2mm">
+          <span class="l">0011</span><input type="checkbox" name="codes.0011" style="width:2mm;height:2mm">
+          <span class="l">MIN</span><input style="width:14mm" name="units.0011" inputmode="numeric">
+        </div>
+        <div class="sticker">
+          <div id="logo2"></div>
+          <div class="big">AMPTELIK&nbsp;&nbsp;OFFICIAL</div>
+          <div class="sub">PLAK HOSPITAAL PLAKKER HIER<br>PASTE HOSPITAL STICKER HERE</div>
+        </div>
+      </div>
+
+      <div class="codes" id="codeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SHEET 2 ══════════════════ -->
+<div class="sheet">
+
+  <!-- ---------- LEFT: ANAESTHESIA RECORD ---------- -->
+  <div class="col">
+    <div class="hdr">
+      <div class="sec" style="font-size:10pt;line-height:1.05">Anaesthesia<br>Record</div>
+      <div id="logo3"></div>
+    </div>
+
+    <div class="bx" style="padding:0">
+      <div class="row" style="border-bottom:var(--bw) solid var(--g)">
+        <div style="width:20mm;border-right:var(--bw) solid var(--g)"><span class="l">Date</span><input type="date" name="record.date"></div>
+        <div style="width:18mm;border-right:var(--bw) solid var(--g)"><span class="l">Height(cm)</span><input name="record.heightCm" inputmode="decimal"></div>
+        <div class="grow" style="border-right:var(--bw) solid var(--g)">
+          <span class="l">Pre-operative airway assessment</span>
+          <div class="row"><span class="l">Mouth opening:</span><input class="grow" name="record.mouthOpening">
+            <span class="l">Neck extension:</span><input class="grow" name="record.neckExtension"></div>
+        </div>
+        <div style="width:52mm"><input name="record.airwayNotes"></div>
+      </div>
+      <div class="row" style="border-bottom:var(--bw) solid var(--g)">
+        <div style="width:8mm;border-right:var(--bw) solid var(--g)"><span class="l">ASA</span><input name="record.asa"></div>
+        <div style="width:12mm;border-right:var(--bw) solid var(--g)"><span class="l">Age</span><input name="record.age"></div>
+        <div style="width:18mm;border-right:var(--bw) solid var(--g)"><span class="l">Weight(kg)</span><input name="record.weightKg" inputmode="decimal"></div>
+        <div class="grow" style="border-right:var(--bw) solid var(--g)"><span class="l">Fasting</span><input name="record.fasting"></div>
+        <div class="grow"><span class="l">Teeth</span><input name="record.teeth"></div>
+      </div>
+      <div class="row"><span class="l" style="width:8mm">CVS</span><input class="grow" name="record.cvs"></div>
+      <div class="row"><span class="l" style="width:8mm">Resp</span><input class="grow" name="record.resp"></div>
+      <div class="row"><span class="l" style="width:8mm">Other</span><input class="grow" name="record.other"></div>
+    </div>
+
+    <div class="rec">
+      <!-- technique column -->
+      <div class="tech">
+        <div class="techgrp">
+          <label class="cb" style="font-size:6pt"><input type="checkbox" name="technique.sedation"><span>Sedation</span></label>
+          <label class="cb" style="font-size:6pt"><input type="checkbox" name="technique.regional"><span>Regional</span></label>
+          <label class="cb" style="font-size:6pt"><input type="checkbox" name="technique.general"><span>General</span></label>
+          <label class="cb"><input type="checkbox" name="technique.preOxygenation"><span>Pre-oxygenation</span></label>
+          <label class="cb"><input type="checkbox" name="technique.ett"><span>Endotracheal tube</span></label>
+          <div class="mini ind">size:<input type="text" name="technique.ettSize"></div>
+          <div class="mini"><input type="checkbox" name="technique.dlt" style="width:1.9mm;height:1.9mm">DLT
+            <label><input type="radio" name="technique.dltSide" value="R" style="width:1.6mm;height:1.6mm">R</label>
+            <label><input type="radio" name="technique.dltSide" value="L" style="width:1.6mm;height:1.6mm">L</label>
+            Size<input type="text" name="technique.dltSize"></div>
+          <div class="mini ind">Intubation Grade<input type="text" name="technique.intubationGrade"></div>
+          <label class="cb ind2"><input type="checkbox" name="technique.nonTraumatic"><span>Non-traumatic</span></label>
+          <label class="cb ind2"><input type="checkbox" name="technique.airEntry"><span>Air entry right - left</span></label>
+          <label class="cb ind2"><input type="checkbox" name="technique.rsi"><span>Rapid sequence induction
+with cricoid pressure</span></label>
+          <label class="cb"><input type="checkbox" name="technique.faceMask"><span>Face mask</span></label>
+          <label class="cb"><input type="checkbox" name="technique.lma"><span>Laryngeal mask</span></label>
+          <div class="mini ind">size:<input type="text" name="technique.lmaSize"></div>
+        </div>
+        <div class="techgrp">
+          <label class="cb"><input type="checkbox" name="technique.circleCircuit"><span>Circle circuit</span></label>
+          <label class="cb"><input type="checkbox" name="technique.bainCircuit"><span>Bain circuit</span></label>
+        </div>
+        <div class="techgrp">
+          <label class="cb"><input type="checkbox" name="technique.spontaneous"><span>Spontaneous breathing</span></label>
+          <label class="cb"><input type="checkbox" name="technique.mechanicalVentilation"><span>Mechanical ventilation</span></label>
+          <div class="mini ind">tidal volume<input type="text" name="technique.tidalVolume">mL</div>
+          <div class="mini ind">rate:<input type="text" name="technique.rate">/minute</div>
+        </div>
+        <div class="techgrp">
+          <label class="cb"><input type="checkbox" name="technique.eyesTaped"><span>Eyes taped shut</span></label>
+          <label class="cb"><input type="checkbox" name="technique.pressurePoints"><span>Pressure points padded</span></label>
+          <label class="cb"><input type="checkbox" name="technique.warmer"><span>Warmer</span></label>
+          <label class="cb"><input type="checkbox" name="technique.calfCompressors"><span>Calf Compressors</span></label>
+          <div class="l" style="font-size:5pt">Intravenous Lines</div>
+          <div class="mini">◯size<input type="text" name="ivLine1.size">site<input type="text" name="ivLine1.site"></div>
+          <div class="mini">◯size<input type="text" name="ivLine2.size">site<input type="text" name="ivLine2.site"></div>
+        </div>
+        <div class="techgrp" style="flex:1">
+          <div class="sec ctr" style="font-size:6.5pt">Monitor</div>
+          <label class="cb"><input type="checkbox" name="monitor.ecg"><span>ECG</span></label>
+          <label class="cb"><input type="checkbox" name="monitor.bp"><span>BP</span></label>
+          <label class="cb"><input type="checkbox" name="monitor.sao2"><span>SaO₂</span></label>
+          <label class="cb"><input type="checkbox" name="monitor.cvpLine"><span>Central venous line</span></label>
+          <div class="mini ind">size:<input type="text" name="monitor.cvpSize"></div>
+          <div class="mini ind">site:<input type="text" name="monitor.cvpSite"></div>
+          <label class="cb"><input type="checkbox" name="monitor.artLine"><span>Arterial line size:</span></label>
+          <div class="mini ind">size:<input type="text" name="monitor.artSize"></div>
+          <div class="mini ind">site:<input type="text" name="monitor.artSite"></div>
+          <label class="cb"><input type="checkbox" name="monitor.nerveStimulator"><span>Peripheral nerve simulator</span></label>
+          <label class="cb"><input type="checkbox" name="monitor.temperature"><span>Temperature</span></label>
+          <label class="cb"><input type="checkbox" name="monitor.toe"><span>TOE</span></label>
+          <div class="mini"><input type="checkbox" name="monitor.other" style="width:1.9mm;height:1.9mm"><input type="text" name="monitor.otherLabel"></div>
+          <label class="cb" style="border-top:var(--bw) solid var(--g);padding-top:.4mm"><input type="checkbox" name="monitor.machineCheck"><span>Machine check OK</span></label>
+          <div class="mini">CPB on<input type="text" name="cpb.on">AXC on<input type="text" name="axc.on"></div>
+          <div class="mini">CPB off<input type="text" name="cpb.off">AXC off<input type="text" name="axc.off"></div>
+        </div>
+      </div>
+
+      <!-- chart column -->
+      <div class="bx" style="padding:.4mm;display:flex;flex-direction:column;min-width:0" id="chart"></div>
+    </div>
+
+    <div class="bx row" style="gap:2mm">
+      <span class="l">Post-Anaesthetic Care Unit</span>
+      <span class="l">HR:</span><input class="grow" name="pacu.hr">
+      <span class="l">BP:</span><input class="grow" name="pacu.bp">
+      <span class="l">RR:</span><input class="grow" name="pacu.rr">
+      <span class="l">SaO₂:</span><input class="grow" name="pacu.sao2">
+      <span class="l">FIO₂:</span><input class="grow" name="pacu.fio2">
+    </div>
+    <div class="row">
+      <div class="bx row" style="width:44mm">
+        <span class="l">Start
+time:</span><input type="time" name="record.startTime">
+        <span class="l">End
+time:</span><input type="time" name="record.endTime">
+      </div>
+      <div class="bx row grow"><span class="l">Anaesthetist</span><input class="grow" name="record.anaesthetist"></div>
+    </div>
+  </div>
+
+  <!-- ---------- RIGHT: SECTION D ---------- -->
+  <div class="col">
+    <div class="bx row" style="gap:1mm">
+      <span class="flag"><b>D</b>&#9654;</span>
+      <div class="l grow" style="font-size:5.2pt">HAS THE PATIENT HAD THE FOLLOWING
+HET DIE PASIËNT DIE VOLGENDE GEHAD</div>
+      <div class="ynbox" style="width:7mm">YES</div>
+      <div class="ynbox" style="width:7mm">NO</div>
+      <div class="l" style="flex:1;font-size:5.2pt">DETAILS
+BESONDERHEDE</div>
+    </div>
+    <div id="histRows" style="display:flex;flex-direction:column;gap:.5mm;flex:1"></div>
+  </div>
+</div>
+
+</form>
+
+<script>
+"use strict";
+const COLS = 30;
+const $ = id => document.getElementById(id);
+const form = $('form');
+
+/* ── tiny helpers ────────────────────────────────────────────── */
+const set = (o,p,v) => { const k=p.split('.'); let a=o;
+  k.forEach((c,i)=>{ if(i===k.length-1) a[c]=v; else a = a[c] ??= (/^\d+$/.test(k[i+1])?[]:{}); }); };
+const get = (o,p) => p.split('.').reduce((a,c)=>a==null?a:a[c], o);
+const inp = (n,extra='') => `<input name="${n}" ${extra}>`;
+const cells = n => `<div class="cells">${Array.from({length:COLS},(_,i)=>inp(n+'.'+i)).join('')}</div>`;
+const crow = (label,name) => `<div class="crow"><div class="clbl">${label}</div><div></div>${cells(name)}<div></div></div>`;
+
+/* ── SASA mark (approximation — swap in the official asset) ──── */
+const logo = `<svg viewBox="0 0 150 44" width="112" height="33" aria-label="SASA">
+  <circle cx="42" cy="9" r="5" fill="#f5a623"/><circle cx="55" cy="6" r="5" fill="#8cc63f"/>
+  <circle cx="68" cy="9" r="5" fill="#4a90d9"/>
+  <path d="M30 22 q25 -9 50 0 q-25 6 -50 0z" fill="#00a651"/>
+  <text x="75" y="36" text-anchor="middle" font-family="Arial" font-weight="700" font-size="15"
+        fill="#00843d" letter-spacing="1">SASA</text>
+  <text x="75" y="43" text-anchor="middle" font-family="Arial" font-size="4"
+        fill="#00a651" letter-spacing=".4">SOUTH AFRICAN SOCIETY OF ANAESTHESIOLOGISTS</text></svg>`;
+['logo1','logo2','logo3'].forEach(id => $(id) && ($(id).innerHTML = logo));
+
+/* ── Section A clauses ───────────────────────────────────────── */
+const AF = [
+"Ek begryp dat ‘n insidentvrye narkose nie gewaarborg kan word nie.",
+"Ek begryp dat teatertoerusting en personeel deur die hospitaal verskaf word. Narkosetoerusting word daagliks getoets.",
+"Ek onderneem om nie alkohol te gebruik, ‘n motorvoertuig te bestuur, sosiale media te gebruik, om die alleen-verantwoordelike te wees vir ‘n baba of minderjarige kind, enige gevaarlike toerusting te hanteer, belangrike besluite te neem of dokumente te teken vir ‘n tydperk van 24 uur nadat narkose toegedien is nie.",
+"Ek verleen toestemming dat my persoonlike inligting bekend gemaak mag word aan belanghebbende instansies, soos deur die wet bepaal, asook anonieme data van ‘n kliniese en praktykbesturende aard wat tot die bevordering van die pasiënt se welstand mag bydra.",
+"Ek stem toe tot die verwerking van my persoonlike en gesondheidsinligting ten einde behoorlike behandeling aan my te verskaf, en/of vir administratiewe doeleindes deur die betrokke inrigting of professionele praktyk. Hierdie toestemming betrek ook die verantwoordelike partye wat optree as diensverskaffers aan die inrigting of professionele praktyk.",
+"In die geval van enige eis, klagte of grief, sal ek voordat ek enige regsaksie neem, gebruik maak van ŉ gratis en konfidensiële premediasievergadering met ŉ geakkrediteerde bemiddelaar aangewys deur South African Society of Anaesthesiologists (SASA).",
+"U narkose rekening is totaal onafhanklik van enige ander rekening wat deur die hospitaal of chirurg uitgereik word.",
+"Die koste (beraming) vir die narkose is met my bespreek.",
+"Die koste (beraming) soos uiteengesit in deel C is gebasseer op hoe lank die prosedure sal duur, en mag verander weens onvoorsiene omstandighede of onverwagte komplikasies.",
+"U is persoonlik verantwoordelik vir betaling van u rekening en nie u mediese fonds nie. U mediese fonds mag dalk nie die hele bedrag dek nie, afhangend van die mediese fonds en die plan opsie wat u gekies het.",
+"Sou u rekening oorhandig word vir invordering, sal rente van 2% per maand gehef word op alle agterstallige bedrae. Alle koste verbonde aan die invordering sal van u verhaal word teen prokureur en kliënte skaal."];
+const EN = [
+"I understand that no one can guarantee an incident free anaesthetic.",
+"I understand that the theatre staff and equipment are supplied by the hospital. Anaesthetic equipment is checked on a daily basis.",
+"I agree not to drink alcohol, drive a car, utilise social media, be responsible as a sole care provider for infants/small children, operate any dangerous equipment, make important decisions or conclude agreements for 24 hours after recovering from anaesthesia.",
+"I agree to allow my personal data to be forwarded to the relevant organisations as required by law and to allow anonymous data of a clinical and practice management nature, to be collected to help to improve the patients healthcare experience.",
+"I agree to the processing of my health and personal information in order to provide me with proper treatment, care and/or for the administration of the institution or professional practice concerned. This consent would extend to responsible parties acting as service providers to the institution or professional practice concerned.",
+"In the event of any claim, complaint or grievance, I shall prior to taking any legal action, promptly initiate a free and confidential pre-mediation meeting with an accredited mediator appointed by South African Society of Anaesthesiologists (SASA).",
+"Your anaesthetic account is rendered completely independently from the accounts rendered by the hospital and the surgeon.",
+"The make up of the cost estimate for the anaesthetic service has been discussed with me.",
+"The cost estimate as set out in section C is time-based and may change as a result of unforeseen circumstances and unexpected complications.",
+"You are personally responsible for payment and not your medical scheme. Your medical scheme may not cover the full amount on your account, depending on the medical scheme and the plan option which you have chosen.",
+"Should your account be handed over for collection, interest will be charged at 2% per month on all outstanding amounts. All costs incurred to collect the arrears will be for your account on attorney and client scale."];
+const clauses = a => a.map((t,i)=>`<p class="clause"><b>A${i+1}.</b> ${t}</p>`).join('');
+$('clausesAf').innerHTML = clauses(AF);
+$('clausesEn').innerHTML = clauses(EN);
+
+/* ── billing code grid ───────────────────────────────────────── */
+const CODES = ["0173","0145","0146","0147","0151","0109","544","0026","1204","0032","1218","0034",
+               "1219","0038","1220","0042","1221","0043","1780","0044","2800","0019","2801","0018",
+               "2802","2804","5103"];
+$('codeGrid').innerHTML = CODES.map(c =>
+  `<label class="code"><span>${c}</span><input type="checkbox" name="codes.${c}"></label>`).join('');
+
+/* ── anaesthesia chart ───────────────────────────────────────── */
+const axis = () => `<div class="ax">${[200,180,160,140,120,100,80,60,40].map(v=>`<span>${v}</span>`).join('')}</div>`;
+$('chart').innerHTML =
+  `<div class="crow"><div class="clbl ctr" style="justify-content:center">Agent</div><div></div>
+     <div class="clbl ctr" style="justify-content:center;border-bottom:var(--bw) solid var(--g)">Dose</div><div></div></div>` +
+  Array.from({length:8},(_,r)=>
+    `<div class="crow"><div class="clbl">${inp('agents.'+r+'.agent')}</div><div></div>${cells('agents.'+r+'.dose')}<div></div></div>`).join('') +
+  crow('Vapour(%)','chart.vapour') +
+  crow('oxygen/nitrous/Air','chart.gas') +
+  `<div class="crow">
+     <div class="clbl" style="gap:.4mm;flex-wrap:wrap">Time:<input type="time" class="tstart" name="chart.startTime">
+       <select class="tstep" name="chart.interval"><option value="5">5 min</option><option value="15">15 min</option></select>
+     </div>
+     <div></div>
+     <div class="cells t">${Array.from({length:COLS},(_,i)=>`<div class="tcell" id="t${i}"></div>`).join('')}</div>
+     <div></div>
+   </div>` +
+  `<div class="crow" style="min-height:32mm">
+     <div class="clbl" style="flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:.4mm">
+       <div class="mini" style="width:100%">Position:<input type="text" name="record.position"></div>
+       <label class="trace"><input type="radio" name="_trace" value="hr" checked>Heart rate (HR) <b style="color:#000">●</b></label>
+       <label class="trace"><input type="radio" name="_trace" value="bp">Blood pressure</label>
+       <div class="l" style="font-size:4.2pt;padding-left:1.4mm;line-height:1.35">Systolic <b style="color:var(--ink)">▼</b>
+Diastolic <b style="color:var(--ink)">▲</b>
+MAP <b style="color:var(--ink)">✕</b> (calculated)</div>
+       <div class="l" id="xhv" style="font-size:5pt;color:#c2410c;padding-left:1.4mm;min-height:2mm"></div>
+     </div>
+     ${axis()}
+     <div class="gwrap"><svg id="g" viewBox="0 0 300 102" preserveAspectRatio="none"></svg></div>
+     ${axis()}
+   </div>` +
+  ['hr','sys','dia','time'].map(t=>Array.from({length:COLS},(_,i)=>
+     `<input type="hidden" name="chart.${t}.${i}">`).join('')).join('') +
+  crow('O₂ saturation(SaO₂)','chart.spo2') +
+  crow('End tidal CO₂(ETCO₂)','chart.etco2') +
+  crow('Fluids','chart.fluids') +
+  crow('Infusions','chart.infusion0') +
+  crow('','chart.infusion1') +
+  crow('','chart.infusion2') +
+  crow('Urine (mL)','chart.urine') +
+  crow('Blood loss (mL)','chart.bloodLoss') +
+  crow('Temperature (°C)','chart.temp') +
+  crow('CVP','chart.cvp') +
+  `<div class="crow" style="flex:1;min-height:8mm">
+     <div class="clbl">Events:</div><div></div>
+     <textarea name="record.events" style="border-left:var(--bw) solid var(--g);height:100%;font-size:6pt"></textarea>
+     <div></div>
+   </div>
+   <div class="crow"><div class="clbl"></div><div></div>
+     <div class="row" style="border-left:var(--bw) solid var(--g)">
+       <span class="l">Input:</span>${inp('record.input')}<span class="l">Output:</span>${inp('record.output')}
+     </div><div></div></div>`;
+
+/* grid + plotting
+   the viewBox is proportioned to the rendered grid, so a circle stays a circle */
+const g = $('g'), H = 102;
+const X = i => i*10;                       // plots sit on the vertical gridline
+const Y = v => (200 - v) * H/160;          // mmHg / bpm  →  svg y
+const V = y => 200 - y * 160/H;            // svg y        →  value
+const el = n => form.elements[n];
+const INK = '#12356b', HOT = '#c2410c';
+const TRI = 3.4;
+/** mean arterial pressure = diastolic + (systolic − diastolic) / 3 */
+const map = (s,d) => Math.round(+d + (+s - +d)/3);
+
+const dot  = (x,v,f,o=1) => `<circle cx="${x}" cy="${Y(v)}" r="2.4" fill="${f}" opacity="${o}"/>`;
+const down = (x,v,f,o=1) => `<path d="M${x-3} ${Y(v)-TRI} L${x+3} ${Y(v)-TRI} L${x} ${Y(v)} Z" fill="${f}" opacity="${o}"/>`;
+const up   = (x,v,f,o=1) => `<path d="M${x-3} ${Y(v)+TRI} L${x+3} ${Y(v)+TRI} L${x} ${Y(v)} Z" fill="${f}" opacity="${o}"/>`;
+
+const grid = () => {
+  let s = '';
+  for (let x=0; x<=COLS; x++)
+    s += `<line x1="${x*10}" y1="0" x2="${x*10}" y2="${H}" stroke="#00a651" stroke-width="${x%5?.25:.6}"/>`;
+  for (let v=40; v<=200; v+=10)
+    s += `<line x1="0" y1="${Y(v)}" x2="300" y2="${Y(v)}" stroke="#00a651" stroke-width="${v%20?.25:.6}"/>`;
+  return s;
+};
+
+function draw(){
+  let m = '', trend = [];
+  for (let i=0; i<COLS; i++){
+    const x = X(i);
+    const hr = el(`chart.hr.${i}`).value, sy = el(`chart.sys.${i}`).value, di = el(`chart.dia.${i}`).value;
+    if (hr) m += dot(x, hr, '#000');
+    if (sy && di){
+      const y = Y(map(sy,di));
+      m += `<line x1="${x}" y1="${Y(sy)}" x2="${x}" y2="${Y(di)}" stroke="${INK}" stroke-width=".5"/>`
+         + `<path d="M${x-2.4} ${y-2.4} L${x+2.4} ${y+2.4} M${x-2.4} ${y+2.4} L${x+2.4} ${y-2.4}"
+                  stroke="${INK}" stroke-width="1"/>`;
+      trend.push(`${x},${y}`);
+    }
+    if (sy) m += down(x, sy, INK);         // systolic: solid down-facing triangle, apex on the value
+    if (di) m += up(x, di, INK);           // diastolic: solid up-facing triangle, apex on the value
+  }
+  const dash = trend.length > 1
+    ? `<polyline points="${trend.join(' ')}" fill="none" stroke="${INK}" stroke-width=".6" stroke-dasharray="2.5 2"/>`
+    : '';
+  g.innerHTML = grid() + dash + m + '<g id="xh"></g>';
+}
+
+/* pointer position → column index and snapped value */
+const at = e => {
+  const r = g.getBoundingClientRect();
+  return {
+    i: Math.min(COLS-1, Math.max(0, Math.round((e.clientX-r.left)/r.width*COLS))),
+    v: Math.min(200, Math.max(40, Math.round(V((e.clientY-r.top)/r.height*H)/5)*5))
+  };
+};
+
+/* ── hover crosshair: shows the column, the value and the symbol you'd plot ── */
+let hot = -1;
+function highlight(i){
+  if (i === hot) return;
+  if (hot >= 0) paint(hot);
+  hot = i;
+  if (hot >= 0){
+    const c = $('t'+hot);
+    c.className = 'tcell hot';
+    const t = el(`chart.time.${hot}`).value;               // reveal the full clock time
+    c.innerHTML = t ? `<span>${t}</span>` : '';
+  }
+}
+g.addEventListener('mousemove', e => {
+  const {i,v} = at(e), x = X(i), y = Y(v);
+  const bp = form.querySelector('[name=_trace]:checked').value === 'bp';
+  const sy = el(`chart.sys.${i}`).value;
+  const ghost = !bp ? dot(x,v,HOT,.55) : (sy && v < +sy ? up(x,v,HOT,.55) : down(x,v,HOT,.55));
+  const xh = $('xh');
+  if (xh) xh.innerHTML =
+    `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="${HOT}" stroke-width=".5" stroke-dasharray="2 2"/>
+     <line x1="0" y1="${y}" x2="300" y2="${y}" stroke="${HOT}" stroke-width=".5" stroke-dasharray="2 2"/>` + ghost;
+  highlight(i);
+  const t = el(`chart.time.${i}`).value;
+  $('xhv').textContent = `${v} ${bp ? 'mmHg' : 'bpm'}${t ? '  ·  ' + t : ''}`;
+});
+g.addEventListener('mouseleave', () => {
+  const xh = $('xh'); if (xh) xh.innerHTML = '';
+  highlight(-1);
+  $('xhv').textContent = '';
+});
+
+g.addEventListener('click', e => {
+  const {i,v} = at(e);
+  if (form.querySelector('[name=_trace]:checked').value === 'hr'){
+    const f = el(`chart.hr.${i}`);
+    f.value = (+f.value === v) ? '' : v;
+  } else {
+    const S = el(`chart.sys.${i}`), D = el(`chart.dia.${i}`);
+    if (+S.value === v)      S.value = '';                 // click a point again to clear it
+    else if (+D.value === v) D.value = '';
+    else if (!S.value)       S.value = v;                  // first point in the column
+    else if (!D.value)       D.value = v;                  // second point
+    else (Math.abs(+S.value - v) <= Math.abs(+D.value - v) ? S : D).value = v;  // move the nearer one
+    if (S.value && D.value && +D.value > +S.value)         // higher of the pair is always systolic
+      [S.value, D.value] = [D.value, S.value];
+  }
+  const keep = hot; draw(); hot = -1; highlight(keep); sync();
+});
+draw();
+
+/* ── time axis ────────────────────────────────────────────────────────
+   Interval is 5 or 15 min per column, so the grid covers 2h25 or 7h15.
+   The start snaps back to the quarter hour, keeping hours and quarters on
+   gridlines. Labels thin out as the interval grows; hover for the full time. */
+const SNAP = 15;
+const step = () => +el('chart.interval').value;
+const hhmm = t => String(Math.floor(t/60)%24).padStart(2,'0') + ':' + String(t%60).padStart(2,'0');
+const mins = v => (+v.slice(0,2))*60 + (+v.slice(3));
+const label = t => {
+  const every = step() <= 5 ? 15 : 30;                 // label density follows the interval
+  return t%60 === 0 ? String(Math.floor(t/60)%24).padStart(2,'0')
+       : (t % every ? '' : String(t%60));
+};
+
+function paint(i){
+  const v = el(`chart.time.${i}`).value, c = $('t'+i);
+  c.className = 'tcell' + (v && v.endsWith(':00') ? ' hr' : '');
+  const L = v ? label(mins(v)) : '';
+  c.innerHTML = L ? `<span>${L}</span>` : '';
+}
+function renderTimes(){ for (let i=0; i<COLS; i++) if (i !== hot) paint(i); }
+
+function rebuildTimes(){
+  const f = el('chart.startTime'), v = f.value;
+  const t0 = v ? Math.floor(mins(v)/SNAP)*SNAP : null;      // round the start down
+  if (v) f.value = hhmm(t0);                                // show the snapped start
+  for (let i=0; i<COLS; i++)
+    el(`chart.time.${i}`).value = v ? hhmm((t0 + i*step()) % 1440) : '';
+  renderTimes(); sync();
+}
+el('chart.startTime').addEventListener('change', rebuildTimes);
+el('chart.interval').addEventListener('change', rebuildTimes);
+renderTimes();
+
+/* ── Section D ───────────────────────────────────────────────── */
+const HIST = [
+["previousAnaesthetics","Previous anaesthetics (when, which operation)","Vorige narkose ( wanneer, watter operasie)"],
+["previousProblems","Problems with previous anaesthetics (details)","Probleme met vorige narkose (besonderhede)"],
+["familyProblems","Any family member with anaesthetic problems (what?)","Enige familielid met narkose probleme (wat?)"],
+["porphyria","Porphyria, malignant hyperthermia or scoline apnoea","Porfirie, maligne hipertermie of scoline apnee"],
+["allergy","Allergy / unusual reaction to medicines (which?)","Allergie / vreemde reaksie op medisyne (watter?)"],
+["medications","Names of all medication, pills, herbal medicine","Naam van alle medikasie, pille, kruie medisyne"],
+["cortisone","Cortisone treatment in the past 12 months","Kortisoonbehandeling in die afgelope 12 maande"],
+["hypertension","High blood pressure","Hoë bloeddruk"],
+["heartDisease","Heart diseases (eg. Chest pain, heart attack, rheumatic fever)","Hartsiekte (bv. Borskaspyn, hartaanval, rumatiekkoors)"],
+["thrombosis","Previous thrombosis / embolism (legs/lungs?)","Vorige trombose / embolisme (bene/longe?)"],
+["exercise","What exercise do you do?","Watter oefening doen u?"],
+["asthma","Asthma, bronchitis or emphysema","Asma, brongitis of emfiseem"],
+["recentCold","Recent cold, cough or flu","Onlangs verkoue, hoes of griep"],
+["snoring","Heavy snoring / problems sleeping","Snork / slaapstoornisse"],
+["diabetesThyroid","Diabetes or thyroid problems","Suikersiekte of skildklier probleem"],
+["jaundice","Jaundice or hepatitis (If so, when?)","Geelsug of hepatitis (indien wel, wanneer?)"],
+["kidney","Kidney or bladder disease","Nier- of blaassiekte"],
+["muscleWeakness","Muscle weakness or stroke","Spierswakheid of beroerte"],
+["bleeding","Tendency to bleed or bruise","Bloei of kneus maklik"],
+["epilepsy","Epileptic convulsions or blackout of any sort","Epileptiese aanvalle of floutes van enige soort"],
+["pregnant","Are you pregnant/breastfeeding?","Is u swanger of borsvoed u tans?"],
+["teeth","False, loose or crowned teeth (if so, where?)","Vals, los of gekroonde tande (indien wel, waar?)"],
+["alcohol","Alcohol consumption per week","Alkohol gebruik per week"],
+["smoking","Do you smoke or use an E-cigarette? (if so, how many per day?)","Rook u, of maak u gebruik van ‘n E-sigaret? (hoeveel per dag?)"],
+["reflux","Do you get heartburn / reflux","Kry u sooibrand – refluks"],
+["anythingElse","Is there anything else your anaesthetist should know?","Is daar enigiets anders wat u narkotiseur behoort te weet?"]];
+
+$('histRows').innerHTML = HIST.map(([k,en,af]) => {
+  let details = `<div class="qd">${inp('history.'+k+'.details')}</div>`;
+  if (k === 'porphyria') details =
+    `<div class="qd" style="gap:.6mm"><span class="l">Weight:
+Gewig:</span>${inp('history.weightKg','inputmode=decimal')}<span class="l">Kg</span>
+     <span class="l">Height:
+Lengte:</span>${inp('history.heightM','inputmode=decimal')}<span class="l">M</span>
+     <span style="color:#e33;font-weight:700">❗</span></div>`;
+  if (k === 'reflux') details =
+    `<div class="qd" style="flex-direction:column;justify-content:center;align-items:stretch">
+       <div class="l" style="font-size:4.1pt">When did you last eat or drink? Time
+Wanneer laas het u geëet of gedrink:Tyd</div>${inp('history.lastIntake')}</div>`;
+  return `<div class="qrow" style="flex:1">
+    <div class="q"><div>${en}</div><div class="af">${af}</div></div>
+    <div class="yn"><div class="yncell"><input type="radio" name="history.${k}.yn" value="yes"></div></div>
+    <div class="yn"><div class="yncell"><input type="radio" name="history.${k}.yn" value="no"></div></div>
+    ${details}</div>`;
+}).join('');
+
+/* ── JSON bridge ─────────────────────────────────────────────── */
+const fields = () => [...form.elements].filter(e => e.name && e.name[0] !== '_');
+const kind = e => e.type === 'checkbox' ? 'boolean'
+              : e.type === 'radio' ? 'enum'
+              : e.type === 'date' || e.type === 'time' || e.type === 'hidden' ? e.type
+              : e.tagName === 'SELECT' ? [...e.options].map(o=>o.value).join('|')
+              : e.tagName === 'TEXTAREA' ? 'longtext' : 'text';
+
+const SASA = {
+  /** current form state as a nested object (empty fields omitted) */
+  data(){
+    const o = {};
+    for (const e of fields()){
+      if (e.type === 'checkbox'){ if (e.checked) set(o, e.name, true); }
+      else if (e.type === 'radio'){ if (e.checked) set(o, e.name, e.value); }
+      else if (e.value !== '') set(o, e.name, e.value);
+    }
+    const m = []; let any = false;                       // MAP is derived, not stored
+    for (let i=0; i<COLS; i++){
+      const s = el(`chart.sys.${i}`).value, d = el(`chart.dia.${i}`).value;
+      if (s && d){ m[i] = map(s,d); any = true; }
+    }
+    if (any) set(o, 'chart.map', m);
+    return o;
+  },
+  /** populate every field from a matching object; missing keys are cleared */
+  fill(j){
+    for (const e of fields()){
+      const v = get(j, e.name);
+      if (e.type === 'checkbox') e.checked = !!v;
+      else if (e.type === 'radio') e.checked = (String(v) === e.value);
+      else e.value = (v == null ? '' : v);
+    }
+    draw(); renderTimes(); sync();
+    return this;
+  },
+  /** every field path with its type — the contract for your API payload */
+  schema(){
+    const s = {};
+    for (const e of fields()) set(s, e.name, e.type === 'radio' ? 'yes|no' : kind(e));
+    set(s, 'chart.map', 'number[] (derived, read-only)');
+    return s;
+  },
+  /** open the panel and keep it mirroring the form as it is filled in */
+  watch(){ live = true; sync(); },
+  /* ── observation table → chart columns ──────────────────────────────
+     Accepts the natural shape a photo of a flowsheet transcribes into:
+     [{time:'16:42', hr:78, bp:'128/74', spo2:99, etco2:35, temp:36.4}, …]
+     Each row is placed in the nearest column for its clock time. Times
+     outside the grid are reported back, never silently dropped. */
+  fromRows(rows){
+    if (!Array.isArray(rows)) throw new Error('expected an array of rows');
+    const f = el('chart.startTime');
+    const first = rows.find(r => r && (r.time || r.Time));
+    if (!f.value && first){ f.value = hhmm(hm(first.time || first.Time)); }
+    rebuildTimes();
+    if (!f.value) throw new Error('no start time — set one, or include a time on the first row');
+
+    const t0 = hm(f.value), st = step();
+    const out = { placed: 0, replaced: 0, skipped: [] };
+    for (const r of rows){
+      const time = String(r.time ?? r.Time ?? '').trim();
+      if (!/^\d{1,2}:\d{2}/.test(time)){ out.skipped.push(time || '(no time)'); continue; }
+      let d = hm(time) - t0;
+      if (d < -720) d += 1440;                                  // case ran past midnight
+      const i = Math.round(d / st);                             // nearest column
+      if (i < 0 || i >= COLS){ out.skipped.push(time); continue; }
+
+      const put = (series, v) => {
+        if (v == null || String(v).trim() === '') return;
+        const e = el(`chart.${series}.${i}`);
+        if (e.value !== '') out.replaced++;
+        e.value = String(v).trim();
+      };
+      const bp = r.bp ?? r.BP ?? r.pressure;
+      if (bp && /\d\s*\/\s*\d/.test(bp)){ const [a,b] = String(bp).split('/'); put('sys',a); put('dia',b); }
+      for (const [k,v] of Object.entries(r)){
+        const series = SERIES[k.toLowerCase().replace(/[^a-z0-9]/g,'')];
+        if (series) put(series, v);
+      }
+      out.placed++;
+    }
+    draw(); renderTimes(); sync();
+    return out;
+  },
+  /** header row + delimited rows (tab, comma, semicolon or 2+ spaces) */
+  parseTable(txt){
+    const lines = txt.trim().split(/\r?\n/).filter(l => l.trim());
+    const cut = l => l.trim().split(/\t|\s*[,;|]\s*|\s{2,}/);
+    const head = cut(lines[0]).map(h => h.toLowerCase().replace(/[^a-z0-9]/g,''));
+    if (!head.includes('time')) throw new Error('the first line must be a header row including "time"');
+    return lines.slice(1).map(l => {
+      const c = cut(l), o = {};
+      head.forEach((h,j) => { if (c[j] !== undefined) o[h] = c[j]; });
+      return o;
+    });
+  },
+  /** read the panel as either a JSON array or a pasted table, then chart it */
+  importTable(){
+    const txt = $('io').value.trim();
+    if (!txt){ $('io').style.display = 'block'; return note('Paste a JSON array or a table with a header row, then press Import table.'); }
+    let rows, r;
+    try { rows = txt[0] === '[' ? JSON.parse(txt) : SASA.parseTable(txt); }
+    catch(e){ return note('Could not read that: ' + e.message); }
+    try { r = SASA.fromRows(rows); } catch(e){ return note(e.message); }
+    note(`${r.placed} row(s) charted`
+       + (r.skipped.length ? ` · ${r.skipped.length} outside the grid (${r.skipped.slice(0,4).join(', ')})` : '')
+       + (r.replaced ? ` · ${r.replaced} existing value(s) replaced` : '')
+       + ' — check every figure against the source before signing.');
+  },
+  show(o){ live = false; const t = $('io'); t.style.display = 'block'; t.value = JSON.stringify(o, null, 2); },
+  apply(){
+    const was = live; live = false;
+    try { SASA.fill(JSON.parse($('io').value || '{}')); live = was; sync(); }
+    catch(err){ live = was; alert('Invalid JSON: ' + err.message); }
+  }
+};
+window.SASA = SASA;
+
+/* column series an imported table can address */
+const SERIES = { hr:'hr', pulse:'hr', heartrate:'hr', sys:'sys', systolic:'sys', dia:'dia', diastolic:'dia',
+  spo2:'spo2', sao2:'spo2', sat:'spo2', sats:'spo2', etco2:'etco2', co2:'etco2', temp:'temp',
+  temperature:'temp', cvp:'cvp', urine:'urine', bloodloss:'bloodLoss', fluids:'fluids',
+  vapour:'vapour', vapor:'vapour', gas:'gas' };
+const hm = v => { const [a,b] = String(v).trim().split(':'); return (+a)*60 + (+b); };
+const note = m => { $('msg').textContent = m; };
+
+/* live mirror: the panel reflects the form on every keystroke, tick and plot */
+let live = false;
+function sync(){
+  if (!live) return;
+  const t = $('io'); t.style.display = 'block';
+  t.value = JSON.stringify(SASA.data(), null, 2);
+}
+form.addEventListener('input', sync);
+form.addEventListener('change', sync);
+</script>
+</body>
+</html>
