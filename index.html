@@ -3,7 +3,8 @@
   SASA Anaesthesia Form / Narkosevorm — digital implementation
 
   SOFTWARE
-  Code and functionality © 2026 A.G.P. van Zyl. All rights reserved.
+  Code and functionality © 2026 Remparts Solutions (Pty) Ltd. All rights reserved.
+  Created by Albert van Zyl.
   This covers the implementation in this file and everything built on top of the
   form: the field mapping and JSON contract, the interactive vitals chart, the
   time axis, the observation-table import, and the HTML/PDF export.
@@ -21,8 +22,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="copyright" content="Software © 2026 A.G.P. van Zyl, all rights reserved. Form content © South African Society of Anaesthesiologists (SASA), v2020.">
-<meta name="author" content="A.G.P. van Zyl">
+<meta name="copyright" content="Software © 2026 Remparts Solutions (Pty) Ltd, all rights reserved. Form content © South African Society of Anaesthesiologists (SASA), v2020.">
+<meta name="author" content="Albert van Zyl">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SASA Anaesthesia Form / Narkosevorm — unofficial digital implementation</title>
 <style>
@@ -186,7 +187,7 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
   <span style="opacity:.7">chart: pick HR or Blood pressure, then click to plot — two clicks in a column give systolic and diastolic</span>
   <span id="msg" style="opacity:.85"></span>
   <div style="width:100%;opacity:.75;font-size:8pt;line-height:1.35">
-    Software and functionality © 2026 A.G.P. van Zyl, all rights reserved.
+    Software and functionality © 2026 Remparts Solutions (Pty) Ltd, all rights reserved — created by Albert van Zyl.
     Form content © South African Society of Anaesthesiologists (SASA), v2020 — unofficial
     implementation, not endorsed by or affiliated with SASA.
   </div>
@@ -841,7 +842,8 @@ const SASA = {
     const o = { _meta: {
       form: 'SASA Anaesthesia Form / Narkosevorm', version: '2020',
       formContent: '© South African Society of Anaesthesiologists (SASA)',
-      software: '© 2026 A.G.P. van Zyl, all rights reserved',
+      software: '© 2026 Remparts Solutions (Pty) Ltd, all rights reserved',
+      creator: 'Albert van Zyl',
       note: 'Unofficial implementation, not endorsed by SASA.' } };
     for (const e of fields()){
       if (e.type === 'checkbox'){ if (e.checked) set(o, e.name, true); }

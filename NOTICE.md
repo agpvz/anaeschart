@@ -2,10 +2,12 @@
 
 Two distinct sets of rights apply to this repository. Neither affects the other.
 
-## Software — © 2026 A.G.P. van Zyl. All rights reserved.
+## Software — © 2026 Remparts Solutions (Pty) Ltd. All rights reserved.
 
-The code and functionality are the author's own work and the author's copyright.
-This covers everything built on top of the form, including:
+Created by Albert van Zyl.
+
+The code and functionality are Remparts Solutions' copyright. This covers everything
+built on top of the form, including:
 
 - the field mapping and the JSON contract (`data()`, `fill()`, `schema()`)
 - the interactive vitals chart — plotting, symbols, derived mean arterial pressure,
@@ -27,8 +29,8 @@ or remove it before any distribution.
 
 ## What this means in practice
 
-The author's rights in the software do not carry a right to distribute SASA's form
-content, and SASA's rights in that content do not extend to the software. Reproducing
+Remparts Solutions' rights in the software do not carry a right to distribute SASA's
+form content, and SASA's rights in that content do not extend to the software. Reproducing
 and distributing the form requires SASA's permission — obtain it before making this
 repository public, deploying beyond your own practice, or sharing the file with other
 practitioners. The software rights are unaffected by that answer either way.

@@ -141,8 +141,8 @@ wrangler pages deploy . --project-name sasaform
 
 Two distinct sets of rights, neither affecting the other.
 
-**Software — © 2026 A.G.P. van Zyl. All rights reserved.** The code and functionality
-are the author's own work: the field mapping and JSON contract, the interactive vitals
+**Software — © 2026 Remparts Solutions (Pty) Ltd. All rights reserved.** Created by
+Albert van Zyl. Covers the field mapping and JSON contract, the interactive vitals
 chart, the time axis, the observation-table import, and the HTML/PDF export. No licence
 is granted.
 
@@ -153,8 +153,8 @@ affiliated with SASA. The SASA mark in `index.html` is an approximation standing
 the official asset — replace or remove it before any distribution.
 
 Distributing the form content requires SASA's permission; obtain it before making this
-repository public or sharing the file beyond your own practice. The software rights are
-unaffected by that answer.
+repository public or sharing the file beyond your own practice. Remparts Solutions'
+rights in the software are unaffected by that answer.
 
 Both notices travel with the work: the source header of `index.html`, its `copyright`
 and `author` meta tags, the strip above the form, and the `_meta` block of every
