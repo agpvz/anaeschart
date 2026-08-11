@@ -820,7 +820,7 @@ Lengte:</span>${inp('history.heightM','inputmode=decimal')}<span class="l">M</sp
   if (k === 'reflux') details =
     `<div class="qd" style="flex-direction:column;justify-content:center;align-items:stretch">
        <div class="l" style="font-size:4.1pt">When did you last eat or drink? Time
-Wanneer laas het u geëet of gedrink:Tyd</div>${inp('history.lastIntake')}</div>`;
+Wanneer laas het u geëet of gedrink:Tyd</div>${inp('history.lastIntake','type="time"')}</div>`;
   return `<div class="qrow" style="flex:1">
     <div class="q"><div>${en}</div><div class="af">${af}</div></div>
     <div class="yn"><div class="yncell"><input type="radio" name="history.${k}.yn" value="yes"></div></div>
