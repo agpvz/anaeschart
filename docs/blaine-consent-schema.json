@@ -1,0 +1,84 @@
+{
+  "_meta": {
+    "formId": "blaine-consent-v2019",
+    "title": "Consent to Anaesthesia and Professional Fees",
+    "provider": "Blaine and Associates Anaesthesiologists",
+    "revision": "2019",
+    "pages": 1,
+    "note": "Field map only. The clause wording is Blaine and Associates' copyright (2019) and is not reproduced here; clause entries carry the underlined lead-in label as an anchor, not the text."
+  },
+
+  "fields": {
+    "consent.patientName": "text",
+    "consent.guardianName": "text",
+    "consent.signed": "boolean",
+    "consent.signatureDate": "date",
+    "consent.procedure": "text",
+    "consent.procedureDate": "date",
+    "consent.surgeon": "text",
+    "consent.initials.risksAndSideEffects": "text",
+    "consent.initials.pleaseNote": "text"
+  },
+
+  "initialBoxes": [
+    { "path": "consent.initials.risksAndSideEffects", "clause": 3, "label": "Initial here please", "position": "right margin, alongside clause 3" },
+    { "path": "consent.initials.pleaseNote", "clause": 7, "label": "Initial here please", "position": "right margin, alongside clause 7" }
+  ],
+
+  "signatureBlock": {
+    "layout": "two columns by two rows at the foot of the page",
+    "topLeft": { "label": "Full Name of Patient", "path": "consent.patientName" },
+    "topRight": { "label": "Name of Parent/Guardian (for minors)", "path": "consent.guardianName" },
+    "bottomLeft": {
+      "label": "Signature",
+      "path": "consent.signed",
+      "inset": { "label": "Date", "path": "consent.signatureDate" }
+    },
+    "bottomRight": [
+      { "label": "Procedure", "path": "consent.procedure" },
+      { "label": "Date", "path": "consent.procedureDate" },
+      { "label": "Surgeon", "path": "consent.surgeon" }
+    ]
+  },
+
+  "clauses": {
+    "1":  { "label": "Consent", "initialRequired": false },
+    "2":  { "label": "Unforeseen incidents", "initialRequired": false },
+    "3":  { "label": "Risks and side effects", "initialRequired": true },
+    "4":  { "label": "Blood transfusion", "initialRequired": false },
+    "5":  { "label": "Personal information", "initialRequired": false },
+    "6":  { "label": "Professional Fees", "initialRequired": false },
+    "7":  { "label": "PLEASE NOTE", "initialRequired": true },
+    "8":  { "label": "Procedure Codes", "initialRequired": false },
+    "9":  { "label": "Estimation of Fees", "initialRequired": false },
+    "10": { "label": "Account Settlement", "initialRequired": false },
+    "11": { "label": "GAP cover", "initialRequired": false },
+    "12": { "label": "Complaints", "initialRequired": false }
+  },
+
+  "anchors": {
+    "titleBar": "CONSENT TO ANAESTHESIA AND PROFESSIONAL FEES, white capitals on a solid blue banner across the full page width",
+    "subtitle": "(PLEASE READ CAREFULLY AND SIGN OR INITIAL WHERE INDICATED)",
+    "footer": "Copyright Blaine and Associates 2019",
+    "clauseCount": 12,
+    "clauseStyle": "numbered 1-12, each opening with an underlined lead-in label followed by a colon",
+    "referencedDocument": "INFORMATION FOR PATIENTS (a separate page of the same document, cited in clause 3)",
+    "contacts": {
+      "tel": "021 840-7006",
+      "email": "info@blaineassoc.co.za",
+      "web": "www.blaineandassociates.co.za",
+      "complaints": "complaints@medicalschemes.co.za, Council for Medical Schemes, 012-431-0500"
+    },
+    "tariffReference": "HPCSA base tariff rates published in 2006 and 2012",
+    "codingReference": "South African Society of Anaesthesiologists and South African Medical Association coding guidelines"
+  },
+
+  "crosswalk": {
+    "_note": "Where a value on this form also exists on the SASA form, so one import can feed both.",
+    "consent.patientName": ["patient.surname", "patient.firstNames", "account.surname"],
+    "consent.procedure": "case.procedure",
+    "consent.procedureDate": ["case.date", "record.date"],
+    "consent.surgeon": "case.surgeon",
+    "consent.signatureDate": ["agreement.dateEn", "agreement.dateAf"]
+  }
+}
