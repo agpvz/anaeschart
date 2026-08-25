@@ -1,0 +1,2171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/agpvz/anaeschart/docs/extraction.schema.json",
+  "title": "Anaesthesia paperwork extraction",
+  "description": "Validates a vision model reply for any of the three forms, bare or wrapped in a second-pass review envelope. The SASA half is generated from docs/schema.json by tools/build-json-schema.mjs — regenerate rather than editing it here.",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/review"
+    },
+    {
+      "$ref": "#/$defs/sasaCase"
+    },
+    {
+      "$ref": "#/$defs/blaineConsent"
+    },
+    {
+      "$ref": "#/$defs/mediclinicAdmission"
+    }
+  ],
+  "$defs": {
+    "sasaCase": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agreement": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "signedAf": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "dateAf": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "signedEn": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "dateEn": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          }
+        },
+        "patient": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "surname": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "birthDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "firstNames": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "account": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "medFund": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "option": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "number": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "authorizationNo": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "gapCover": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "surname": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "title": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "initials": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "postalAddress1": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "postalAddress2": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "postalCode": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "idNo": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "cell": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "telHome": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "telWork": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "fax": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "resAddress1": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "resAddress2": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "employer": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "employerAddress": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "email": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "familyFriend": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "familyFriendTel": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "costEstimate": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "case": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hospital": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "surgeon": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "procedure": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "code": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "timeFrom": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "timeTo": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "timeMin": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "icd10": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "asa": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "codes": {
+          "type": "object",
+          "description": "Billing codes as keys, leading zero kept.",
+          "propertyNames": {
+            "pattern": "^\\d{3,4}$"
+          },
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "units": {
+          "type": "object",
+          "description": "Minutes per time-based billing code.",
+          "propertyNames": {
+            "pattern": "^\\d{3,4}$"
+          },
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number"
+            ]
+          }
+        },
+        "record": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "heightCm": {
+              "type": "number"
+            },
+            "mouthOpening": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "neckExtension": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "airwayNotes": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "asa": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "age": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "weightKg": {
+              "type": "number"
+            },
+            "fasting": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "teeth": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "cvs": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "resp": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "other": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "position": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "events": {
+              "type": "string"
+            },
+            "input": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "output": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "startTime": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "endTime": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "anaesthetist": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "technique": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "sedation": {
+              "type": "boolean"
+            },
+            "regional": {
+              "type": "boolean"
+            },
+            "general": {
+              "type": "boolean"
+            },
+            "preOxygenation": {
+              "type": "boolean"
+            },
+            "ett": {
+              "type": "boolean"
+            },
+            "ettSize": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "dlt": {
+              "type": "boolean"
+            },
+            "dltSide": {
+              "type": "string",
+              "enum": [
+                "R",
+                "L"
+              ]
+            },
+            "dltSize": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "intubationGrade": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "nonTraumatic": {
+              "type": "boolean"
+            },
+            "airEntry": {
+              "type": "boolean"
+            },
+            "rsi": {
+              "type": "boolean"
+            },
+            "faceMask": {
+              "type": "boolean"
+            },
+            "lma": {
+              "type": "boolean"
+            },
+            "lmaSize": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "circleCircuit": {
+              "type": "boolean"
+            },
+            "bainCircuit": {
+              "type": "boolean"
+            },
+            "spontaneous": {
+              "type": "boolean"
+            },
+            "mechanicalVentilation": {
+              "type": "boolean"
+            },
+            "tidalVolume": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "rate": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "eyesTaped": {
+              "type": "boolean"
+            },
+            "pressurePoints": {
+              "type": "boolean"
+            },
+            "warmer": {
+              "type": "boolean"
+            },
+            "calfCompressors": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ivLine1": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "site": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "ivLine2": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "site": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "monitor": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ecg": {
+              "type": "boolean"
+            },
+            "bp": {
+              "type": "boolean"
+            },
+            "sao2": {
+              "type": "boolean"
+            },
+            "cvpLine": {
+              "type": "boolean"
+            },
+            "cvpSize": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "cvpSite": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "artLine": {
+              "type": "boolean"
+            },
+            "artSize": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "artSite": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "nerveStimulator": {
+              "type": "boolean"
+            },
+            "temperature": {
+              "type": "boolean"
+            },
+            "toe": {
+              "type": "boolean"
+            },
+            "other": {
+              "type": "boolean"
+            },
+            "otherLabel": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "machineCheck": {
+              "type": "boolean"
+            }
+          }
+        },
+        "cpb": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "on": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "off": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "axc": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "on": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "off": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "agents": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "agent": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "unit": {
+                "type": "string",
+                "enum": [
+                  "g",
+                  "mg",
+                  "mcg"
+                ]
+              },
+              "dose": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "chart": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "vapour": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "gasMix": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "oxygen": {
+                  "type": "boolean"
+                },
+                "nitrous": {
+                  "type": "boolean"
+                },
+                "air": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "gas": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "startTime": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "interval": {
+              "type": "string",
+              "enum": [
+                "5",
+                "15"
+              ]
+            },
+            "hr": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "sys": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "dia": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "time": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "number",
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "spo2": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "etco2": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "fluids": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "urine": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "bloodLoss": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "temp": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "cvp": {
+              "type": "array",
+              "maxItems": 30,
+              "items": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              }
+            },
+            "map": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "readOnly": true
+            }
+          }
+        },
+        "infusions": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "dose": {
+                "type": "array",
+                "maxItems": 30,
+                "items": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "pacu": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hr": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "bp": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "rr": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "sao2": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "fio2": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "history": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "previousAnaesthetics": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "previousProblems": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "familyProblems": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "porphyria": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                }
+              },
+              "description": "Details cell is replaced by history.weightKg and history.heightM — no .details field."
+            },
+            "weightKg": {
+              "type": "number"
+            },
+            "heightM": {
+              "type": "number"
+            },
+            "allergy": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "medications": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "cortisone": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "hypertension": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "heartDisease": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "thrombosis": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "exercise": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "asthma": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "recentCold": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "snoring": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "diabetesThyroid": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "jaundice": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "kidney": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "muscleWeakness": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "bleeding": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "epilepsy": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "pregnant": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "teeth": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "alcohol": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "smoking": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            },
+            "reflux": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                }
+              },
+              "description": "Details cell is replaced by history.lastIntake — no .details field."
+            },
+            "lastIntake": {
+              "type": "string",
+              "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "anythingElse": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "yn": {
+                  "type": "string",
+                  "enum": [
+                    "yes",
+                    "no"
+                  ]
+                },
+                "details": {
+                  "type": [
+                    "string",
+                    "number"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "observations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "time"
+            ],
+            "properties": {
+              "time": {
+                "type": "string",
+                "pattern": "^([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "hr": {
+                "type": "number"
+              },
+              "bp": {
+                "type": "string",
+                "pattern": "^\\d{2,3}/\\d{2,3}$"
+              },
+              "sys": {
+                "type": "number"
+              },
+              "dia": {
+                "type": "number"
+              },
+              "spo2": {
+                "type": "number"
+              },
+              "etco2": {
+                "type": "number"
+              },
+              "temp": {
+                "type": "number"
+              },
+              "cvp": {
+                "type": "number"
+              },
+              "urine": {
+                "type": "number"
+              },
+              "bloodloss": {
+                "type": "number"
+              },
+              "fluids": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "uncertain": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "uncertain": {
+          "type": "array",
+          "description": "Dotted paths recorded but not read confidently.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_meta": {
+          "type": "object",
+          "description": "Copyright and provenance block written by the exporter."
+        }
+      },
+      "title": "SASA anaesthesia case"
+    },
+    "blaineConsent": {
+      "type": "object",
+      "title": "Blaine and Associates consent to anaesthesia and professional fees",
+      "additionalProperties": false,
+      "required": [
+        "consent"
+      ],
+      "properties": {
+        "consent": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "formId": {
+              "type": "string",
+              "const": "blaine-consent-v2019"
+            },
+            "formRevision": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "patientName": {
+              "type": "string"
+            },
+            "guardianName": {
+              "type": "string"
+            },
+            "signed": {
+              "type": "boolean"
+            },
+            "signatureDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "procedure": {
+              "type": "string"
+            },
+            "procedureDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "surgeon": {
+              "type": "string"
+            },
+            "initials": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "risksAndSideEffects": {
+                  "type": "string",
+                  "maxLength": 8
+                },
+                "pleaseNote": {
+                  "type": "string",
+                  "maxLength": 8
+                }
+              }
+            }
+          }
+        },
+        "uncertain": {
+          "type": "array",
+          "description": "Dotted paths recorded but not read confidently.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_meta": {
+          "type": "object",
+          "description": "Copyright and provenance block written by the exporter."
+        }
+      }
+    },
+    "mediclinicAdmission": {
+      "type": "object",
+      "title": "Mediclinic admission summary (D 2700)",
+      "additionalProperties": false,
+      "required": [
+        "admission"
+      ],
+      "properties": {
+        "admission": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "formCode": {
+              "type": "string"
+            },
+            "stickerOnly": {
+              "type": "boolean"
+            },
+            "facility": {
+              "type": "string"
+            },
+            "facilityAddress": {
+              "type": "string"
+            },
+            "facilityPostal": {
+              "type": "string"
+            },
+            "facilityTel": {
+              "type": "string"
+            },
+            "facilityFax": {
+              "type": "string"
+            },
+            "vatNo": {
+              "type": "string"
+            },
+            "regNo": {
+              "type": "string"
+            },
+            "practiceNo": {
+              "type": "string"
+            },
+            "ref": {
+              "type": "string"
+            },
+            "caseNo": {
+              "type": "string"
+            },
+            "bed": {
+              "type": "string"
+            },
+            "bedWard": {
+              "type": "string"
+            },
+            "patientType": {
+              "type": "string"
+            },
+            "finClass": {
+              "type": "string"
+            },
+            "hsc": {
+              "type": "string"
+            },
+            "admittedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "admittedBy": {
+              "type": "string"
+            },
+            "printedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "printedBy": {
+              "type": "string"
+            }
+          }
+        },
+        "patient": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "surname": {
+              "type": "string"
+            },
+            "firstNames": {
+              "type": "string"
+            },
+            "initials": {
+              "type": "string"
+            },
+            "idNo": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "address1": {
+              "type": "string"
+            },
+            "address2": {
+              "type": "string"
+            },
+            "address3": {
+              "type": "string"
+            },
+            "postalCode": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "email": {
+              "type": "string"
+            },
+            "birthDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "sex": {
+              "type": "string",
+              "enum": [
+                "Male",
+                "Female"
+              ]
+            },
+            "ageText": {
+              "type": "string",
+              "pattern": "^\\d{1,3}y(\\d{1,2}m)?$"
+            },
+            "ageYears": {
+              "type": "number"
+            },
+            "tel": {
+              "type": "string"
+            },
+            "religion": {
+              "type": "string"
+            },
+            "referDoc": {
+              "type": "string"
+            },
+            "familyDoc": {
+              "type": "string"
+            },
+            "admitDoc": {
+              "type": "string"
+            },
+            "admitDocPracticeNo": {
+              "type": "string"
+            }
+          }
+        },
+        "member": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "surname": {
+              "type": "string"
+            },
+            "firstNames": {
+              "type": "string"
+            },
+            "initials": {
+              "type": "string"
+            },
+            "idNo": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "address1": {
+              "type": "string"
+            },
+            "address2": {
+              "type": "string"
+            },
+            "address3": {
+              "type": "string"
+            },
+            "postalCode": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "email": {
+              "type": "string"
+            },
+            "telHome": {
+              "type": "string"
+            },
+            "telWork": {
+              "type": "string"
+            },
+            "celWork": {
+              "type": "string"
+            },
+            "employerOccupation": {
+              "type": "string"
+            },
+            "employerName": {
+              "type": "string"
+            },
+            "employerAddress1": {
+              "type": "string"
+            },
+            "employerAddress2": {
+              "type": "string"
+            }
+          }
+        },
+        "signatory": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "surname": {
+              "type": "string"
+            },
+            "firstNames": {
+              "type": "string"
+            },
+            "initials": {
+              "type": "string"
+            },
+            "idNo": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "address1": {
+              "type": "string"
+            },
+            "address2": {
+              "type": "string"
+            },
+            "address3": {
+              "type": "string"
+            },
+            "postalCode": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "email": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "telHome": {
+              "type": "string"
+            },
+            "isPatient": {
+              "type": "boolean"
+            }
+          }
+        },
+        "medicalAid": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "scheme": {
+              "type": "string"
+            },
+            "plan": {
+              "type": "string"
+            },
+            "number": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "preAuthNo": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "dependantCode": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "patientEmployer": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "occupation": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "address": {
+              "type": "string"
+            },
+            "telWork": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "nextOfKin": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "relationship": {
+                "type": "string"
+              },
+              "tel": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "type",
+              "code"
+            ],
+            "properties": {
+              "seq": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "flag": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string",
+                "enum": [
+                  "ICD",
+                  "CPT"
+                ]
+              },
+              "code": {
+                "type": "string"
+              },
+              "modifier": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "diagnosis": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "finalDiagnosis": {
+              "type": "string"
+            },
+            "procedure": {
+              "type": "string"
+            }
+          }
+        },
+        "consents": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ucr": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "dataPrivacy": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "coPayments": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "exclusions": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "survey": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "prosthesisLimitExplained": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "smsEmail": {
+              "type": "string",
+              "enum": [
+                "yes",
+                "no"
+              ]
+            },
+            "belongings": {
+              "type": "integer",
+              "enum": [
+                1,
+                2
+              ]
+            }
+          }
+        },
+        "footer": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "doctorSigned": {
+              "type": "boolean"
+            },
+            "date": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            }
+          }
+        },
+        "uncertain": {
+          "type": "array",
+          "description": "Dotted paths recorded but not read confidently.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_meta": {
+          "type": "object",
+          "description": "Copyright and provenance block written by the exporter."
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "form",
+        "data"
+      ],
+      "properties": {
+        "form": {
+          "type": "string",
+          "enum": [
+            "sasa-case",
+            "blaine-consent-v2019",
+            "mediclinic-admission"
+          ]
+        },
+        "data": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sasaCase"
+            },
+            {
+              "$ref": "#/$defs/blaineConsent"
+            },
+            {
+              "$ref": "#/$defs/mediclinicAdmission"
+            }
+          ]
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "added": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "removed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "confirmed": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "corrected": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "to"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "from": {},
+                  "to": {},
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "conflicts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "type": "array"
+                  },
+                  "resolution": {
+                    "type": "string",
+                    "enum": [
+                      "kept",
+                      "omitted",
+                      "reread"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "stillUncertain": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "checks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

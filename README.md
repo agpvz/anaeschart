@@ -139,6 +139,34 @@ or admission photo can seed the case before the record itself is transcribed. Re
 crosswalk caveats first — on the admission sheet the account holder is the medical aid's
 main member, who is often not the patient.
 
+### Validating and improving an extraction
+
+`docs/extraction.schema.json` is a JSON Schema (draft 2020-12) covering all three forms,
+bare or wrapped in a review envelope. Use it as the structured-output contract when calling
+a model, and to check a reply before importing it:
+
+```sh
+node tools/validate-extraction.mjs reply.json
+```
+
+Errors are structural — a date that isn't `YYYY-MM-DD`, an interval that isn't 5 or 15, a
+field the form doesn't have. Warnings are the house rules a schema can't state: a `false`
+where an omission belongs, an `uncertain` path with no value behind it, observations off
+the grid, a systolic below its diastolic, an identity number disagreeing with its date of
+birth. Warnings don't fail the run — each one is a question for the anaesthetist.
+
+The SASA half of the schema is generated, so it can't drift from the form:
+
+```sh
+node tools/build-json-schema.mjs   # after regenerating docs/schema.json
+```
+
+`docs/refine-extraction-prompt.md` is the second pass. Give a model the photographs plus
+the extraction it already made — or two independent extractions to reconcile — and it
+returns a corrected object with an audit of what it added, corrected, removed and could
+still not read. Feeding the validator's output in with it points the second pass straight
+at the doubtful fields.
+
 **Transcription is a draft.** Read every figure back against the source before the
 record is signed, and keep the source image with the case.
 
