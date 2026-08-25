@@ -1,0 +1,209 @@
+{
+  "_meta": {
+    "formId": "mediclinic-admission",
+    "title": "Mediclinic admission summary / patient information sheet",
+    "issuer": "Mediclinic Southern Africa",
+    "formCode": "D 2700",
+    "pages": 1,
+    "orientation": "portrait; commonly photographed rotated 90°, with the MEDICLINIC wordmark on the left edge",
+    "nature": "system-printed at admission, not handwritten; only the consent circles and the footer block are completed by hand",
+    "note": "Field map only. No patient data from any real form is recorded here — value entries are types and format patterns, never live identifiers."
+  },
+
+  "identityWarning": "This page carries up to three distinct people (patient, medical-aid main member, signatory) and two employers (the member's and the patient's). They are frequently different individuals. Never merge them into one identity and never copy an identifier across blocks.",
+
+  "fields": {
+    "admission.formCode": "text",
+    "admission.facility": "text",
+    "admission.facilityAddress": "text",
+    "admission.facilityPostal": "text",
+    "admission.facilityTel": "text",
+    "admission.facilityFax": "text",
+    "admission.vatNo": "text",
+    "admission.regNo": "text",
+    "admission.practiceNo": "text",
+    "admission.ref": "text",
+    "admission.caseNo": "text",
+    "admission.bed": "text",
+    "admission.bedWard": "text",
+    "admission.patientType": "text",
+    "admission.finClass": "text",
+    "admission.hsc": "text",
+    "admission.admittedAt": "datetime",
+    "admission.admittedBy": "text",
+    "admission.printedAt": "datetime",
+    "admission.printedBy": "text",
+
+    "patient.title": "text",
+    "patient.surname": "text",
+    "patient.firstNames": "text",
+    "patient.initials": "text",
+    "patient.idNo": "text",
+    "patient.birthDate": "date",
+    "patient.sex": "\"Male\"|\"Female\"",
+    "patient.ageText": "text",
+    "patient.ageYears": "number",
+    "patient.address1": "text",
+    "patient.address2": "text",
+    "patient.address3": "text",
+    "patient.postalCode": "text",
+    "patient.tel": "text",
+    "patient.email": "text",
+    "patient.religion": "text",
+    "patient.referDoc": "text",
+    "patient.familyDoc": "text",
+    "patient.admitDoc": "text",
+    "patient.admitDocPracticeNo": "text",
+
+    "member.title": "text",
+    "member.surname": "text",
+    "member.initials": "text",
+    "member.idNo": "text",
+    "member.address1": "text",
+    "member.address2": "text",
+    "member.address3": "text",
+    "member.postalCode": "text",
+    "member.telHome": "text",
+    "member.telWork": "text",
+    "member.celWork": "text",
+    "member.email": "text",
+    "member.employerOccupation": "text",
+    "member.employerName": "text",
+    "member.employerAddress1": "text",
+    "member.employerAddress2": "text",
+
+    "medicalAid.scheme": "text",
+    "medicalAid.plan": "text",
+    "medicalAid.number": "text",
+    "medicalAid.preAuthNo": "text",
+    "medicalAid.dependantCode": "text",
+
+    "signatory.name": "text",
+    "signatory.idNo": "text",
+    "signatory.address1": "text",
+    "signatory.address2": "text",
+    "signatory.address3": "text",
+    "signatory.postalCode": "text",
+    "signatory.telHome": "text",
+    "signatory.email": "text",
+    "signatory.isPatient": "boolean",
+
+    "patientEmployer.occupation": "text",
+    "patientEmployer.name": "text",
+    "patientEmployer.address": "text",
+    "patientEmployer.telWork": "text",
+
+    "diagnosis.description": "text",
+    "diagnosis.finalDiagnosis": "text",
+    "diagnosis.procedure": "text",
+
+    "footer.doctorSigned": "boolean",
+    "footer.date": "date"
+  },
+
+  "arrays": {
+    "nextOfKin[]": {
+      "name": "text",
+      "relationship": "text",
+      "tel": "text"
+    },
+    "codes[]": {
+      "seq": "text",
+      "flag": "text",
+      "type": "\"ICD\"|\"CPT\"",
+      "code": "text",
+      "modifier": "text",
+      "description": "text"
+    }
+  },
+
+  "consents": {
+    "_note": "Pre-printed YES/NO pairs under 'Admission information'. Record only the one circled; omit the path when neither is marked. An unmarked consent is a real finding.",
+    "consents.ucr": "\"yes\"|\"no\"",
+    "consents.dataPrivacy": "\"yes\"|\"no\"",
+    "consents.coPayments": "\"yes\"|\"no\"",
+    "consents.exclusions": "\"yes\"|\"no\"",
+    "consents.survey": "\"yes\"|\"no\"",
+    "consents.prosthesisLimitExplained": "\"yes\"|\"no\"",
+    "consents.smsEmail": "\"yes\"|\"no\"",
+    "consents.belongings": "1|2 — 1 = left with family/friends, 2 = taken to the nursing unit at own risk; circled by hand"
+  },
+
+  "formatPatterns": {
+    "idNo": "13 digits, no spaces or dashes",
+    "birthDate": "printed YYYY/MM/DD, emitted YYYY-MM-DD",
+    "admittedAt": "printed YYYY/MM/DD HH:MM, emitted YYYY-MM-DDTHH:MM",
+    "ageText": "NNyNNm, e.g. 56y10m — years and months since birth",
+    "bed": "ward letter / bed identifier, e.g. L / LS04",
+    "practiceNo": "numeric practice number; the admitting doctor's is printed inline after the name as Prac#",
+    "icd10": "letter, two digits, optional dot and subdivision",
+    "cpt": "5 digits"
+  },
+
+  "sectionOrder": [
+    "sticker header (barcode, case no, date, bed, age, patient, admitting doctor, DOB, ID, contact, scheme)",
+    "facility block (logo, address, telephone, VAT and registration numbers, practice number)",
+    "Ref. line",
+    "Patient Information",
+    "Member Information",
+    "Member Employer Information",
+    "Admit / Printed audit line",
+    "medical aid block",
+    "Next of Kin",
+    "Signatory/On Behalf of Patient",
+    "Patient Employer Information",
+    "Diagnosis/Procedure with the code table",
+    "Admission information (consent YES/NO list)",
+    "declaration blocks (Take Home Medication, Take Note, NB, Consent to Release Patient Information, Indemnity, belongings options)",
+    "footer (FINAL DIAGNOSIS, PROCEDURE, SIGNATURE DOCTOR, DATE)"
+  ],
+
+  "anchors": {
+    "wordmark": "MEDICLINIC in blue lowercase-weighted caps with the square glyph logo, top of page",
+    "facilityLine": "Mediclinic <site name> followed by a street address, PO Box, Tel and Fax",
+    "labelStyle": "monospace labels padded with dot leaders before the colon — Med.Aid....:, ID#....:, Age....: — the single strongest structural signature",
+    "auditLine": "Admit...: and Printed: each with a timestamp and a By: operator username",
+    "codeTable": "header reading T.c ID Code Mod Description",
+    "consentList": "Admission information with right-aligned YES/NO pairs",
+    "footerBlock": "FINAL DIAGNOSIS, PROCEDURE, SIGNATURE DOCTOR and DATE ruled lines across the foot",
+    "formCode": "boxed form code D 2700 at the outer edge",
+    "declarationOpening": "I hereby authorise the hospital to provide any information of whatever nature concerning my hospitalisation"
+  },
+
+  "crosswalk": {
+    "_note": "Where a value also exists on the SASA form, so an admission photo can seed the case.",
+    "patient.surname": "patient.surname",
+    "patient.firstNames": "patient.firstNames",
+    "patient.birthDate": "patient.birthDate",
+    "patient.idNo": "account.idNo",
+    "patient.address1": "account.resAddress1",
+    "patient.address2": "account.resAddress2",
+    "patient.postalCode": "account.postalCode",
+    "patient.tel": "account.cell",
+    "patient.email": "account.email",
+    "member.surname": "account.surname",
+    "member.initials": "account.initials",
+    "member.title": "account.title",
+    "member.employerName": "account.employer",
+    "member.employerAddress1": "account.employerAddress",
+    "medicalAid.scheme": "account.medFund",
+    "medicalAid.plan": "account.option",
+    "medicalAid.number": "account.number",
+    "medicalAid.preAuthNo": "account.authorizationNo",
+    "admission.facility": "case.hospital",
+    "admission.admittedAt": "case.date",
+    "patient.admitDoc": "case.surgeon",
+    "diagnosis.procedure": "case.procedure",
+    "codes[].code (type ICD)": "case.icd10",
+    "codes[].code (type CPT)": "case.code",
+    "nextOfKin[0].name": "account.familyFriend",
+    "nextOfKin[0].tel": "account.familyFriendTel",
+    "patient.ageYears": "record.age"
+  },
+
+  "crosswalkCaveats": [
+    "account.* on the SASA form means the person responsible for the account. On this page that is the medical-aid main member, who is often not the patient — take account.surname/title/initials/employer from member.*, not from patient.*.",
+    "account.idNo on the SASA form sits in the account holder's block but is conventionally the patient's identity number. Confirm which the practice intends before mapping either.",
+    "The CPT codes here are procedure codes for the hospital account, not the anaesthetic billing codes that populate codes.<code> on the SASA form. Do not import them into that block."
+  ]
+}

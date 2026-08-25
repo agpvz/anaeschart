@@ -123,6 +123,22 @@ worked payload in that shape.
 Imports also merge, so a demographics photo, a history photo and the vitals table can
 be imported one after another without clearing each other.
 
+### Other paperwork in the same case
+
+A case arrives as a bundle, and the other sheets in it carry values the SASA form wants.
+Each has a field map and a paired prompt covering both recognition — how to tell the form
+apart from everything else on the clipboard — and transcription:
+
+| form | map | prompt |
+|---|---|---|
+| Blaine and Associates consent to anaesthesia and professional fees | `docs/blaine-consent-schema.json` | `docs/blaine-consent-prompt.md` |
+| Mediclinic admission summary (form D 2700) | `docs/mediclinic-admission-schema.json` | `docs/mediclinic-admission-prompt.md` |
+
+Each map ends in a `crosswalk` block naming the SASA paths its fields feed, so a consent
+or admission photo can seed the case before the record itself is transcribed. Read the
+crosswalk caveats first — on the admission sheet the account holder is the medical aid's
+main member, who is often not the patient.
+
 **Transcription is a draft.** Read every figure back against the source before the
 record is signed, and keep the source image with the case.
 
