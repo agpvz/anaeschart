@@ -17,6 +17,23 @@ Two A4 landscape sheets matching the printed form:
 `@page` is set to A4 landscape, so printing gives a paper record that matches the
 original layout.
 
+## Two forms, one file
+
+The toolbar's form picker switches between the **SASA anaesthesia form** and the
+**Blaine and Associates consent to anaesthesia and professional fees**. Only the selected
+form is on screen, only it reaches the printer, and the page size follows it — A4 landscape
+for the record, A4 portrait for the consent.
+
+Both share one JSON document, so `SASA.data()` returns whichever fields are filled and
+`SASA.fill()` populates both. Importing a payload whose only content is a `consent` object
+switches to the consent sheet by itself. `Save HTML` and `Save PDF` act on the form in
+view, and a saved file reopens on the form it was saved from.
+
+The consent clause wording lives in one array (`CLAUSES` in `index.html`) and was
+transcribed from a photograph of the printed form. **Check it against the practice's master
+copy before any clinical use**, and note that the clause text is Blaine and Associates'
+copyright, not covered by either notice below.
+
 ## JSON API
 
 Everything is exposed on `window.SASA`.

@@ -34,6 +34,9 @@
   --ink:#12356b;          /* entered data ("pen") */
   --bw:.35mm;             /* rule weight */
   --r:1.6mm;              /* corner radius */
+  --b:#4472c4;            /* consent banner */
+  --bd:#2f5597;           /* consent banner edge */
+  --bl:#d9e2f3;           /* consent field tint */
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:#dfe4e8}
@@ -44,6 +47,42 @@ form{display:block}
 .sheet{width:297mm;height:210mm;background:#fff;margin:6mm auto;padding:2.5mm;display:grid;
   grid-template-columns:1fr 1fr;gap:2.5mm;position:relative;box-shadow:0 1mm 4mm #0003;overflow:hidden}
 .col{display:flex;flex-direction:column;gap:.8mm;min-width:0}
+
+/* ---------- form switching ---------- */
+/* Only the selected form is on screen and only it reaches the printer; the page
+   size follows it, set from script because @page cannot be varied per element. */
+body[data-form="sasa"]   .sheet[data-form="blaine"],
+body[data-form="blaine"] .sheet[data-form="sasa"]{display:none}
+
+/* ---------- consent sheet (A4 portrait) ---------- */
+.sheet.portrait{width:210mm;height:297mm;display:flex;flex-direction:column;padding:11mm 10mm 8mm;
+  grid-template-columns:none;font-family:Calibri,Carlito,"Segoe UI",Arial,sans-serif;color:#000}
+.cbanner{background:var(--b);color:#fff;font-size:15pt;font-weight:700;letter-spacing:.2pt;
+  padding:1.6mm 3mm;border-left:3mm solid var(--bd)}
+.csub{text-align:center;font-size:9.5pt;font-weight:700;margin:3mm 0 2.5mm}
+.clauses{margin:0;padding-left:6mm;font-size:8.1pt;line-height:1.22;text-align:justify}
+.clauses li{margin-bottom:1.1mm}
+.clauses .lead{text-decoration:underline}
+.clauses b{font-weight:700}
+.clauses a{color:#00f}
+.cinit{float:right;width:26mm;height:12mm;margin:0 0 1mm 3mm;background:var(--bl);
+  border:.2mm solid #9bb0d4;display:flex;align-items:center;justify-content:center}
+.cinit input{width:100%;height:100%;border:0;background:transparent;text-align:center;
+  font-size:11pt;font-weight:700;text-transform:uppercase}
+.cinit input::placeholder{font-size:5.4pt;font-weight:400;color:#4a5f80;text-transform:none}
+.csign{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;margin-top:auto;padding-top:3mm}
+.cbox{background:var(--bl);border:.2mm solid #9bb0d4;padding:1.6mm 2mm;font-size:8.5pt}
+.cbox .l{font-size:8.5pt;font-weight:400;color:#000;white-space:nowrap}
+.cbox .cf{display:flex;align-items:baseline;gap:1.5mm;margin-bottom:1mm}
+.cbox .cf:last-child{margin-bottom:0}
+.cbox input{flex:1;min-width:0;border:0;border-bottom:.2mm solid #6b83ad;background:transparent;
+  font-size:8.5pt;padding:0 .5mm}
+.csigbox{min-height:26mm;display:flex;flex-direction:column;justify-content:space-between}
+.csigmark{display:flex;align-items:center;gap:1.2mm;font-size:7pt}
+.csigmark input{flex:0 0 auto;width:3mm;height:3mm;border-bottom:0}
+.cdate{align-self:flex-end;width:52%;background:#c9d6ea;border:.2mm solid #9bb0d4;padding:1mm 1.5mm}
+.cfoot{text-align:right;font-size:7.5pt;margin-top:2mm}
+.cnote{font-size:6.6pt;color:#555;margin-top:1.5mm;line-height:1.25}
 
 /* ---------- primitives ---------- */
 .bx{border:var(--bw) solid var(--g);border-radius:var(--r);padding:.3mm .8mm;position:relative;min-height:4.2mm}
@@ -182,10 +221,14 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
 }
 </style>
 </head>
-<body>
+<body data-form="sasa">
 
 <div id="bar">
-  <strong>SASA form</strong>
+  <select id="formPick" onchange="SASA.form(this.value)"
+          style="font:inherit;font-size:8.5pt;padding:1mm;border:0;border-radius:1mm">
+    <option value="sasa">SASA anaesthesia form</option>
+    <option value="blaine">Blaine consent</option>
+  </select>
   <button type="button" onclick="SASA.watch()">Live JSON</button>
   <button type="button" onclick="SASA.importTable()">Apply now</button>
   <button type="button" onclick="SASA.apply()">Replace all</button>
@@ -209,7 +252,7 @@ input::-webkit-calendar-picker-indicator{opacity:.35}
 <form id="form" onsubmit="return false">
 
 <!-- ══════════════════ SHEET 1 ══════════════════ -->
-<div class="sheet">
+<div class="sheet" data-form="sasa">
 
   <!-- ---------- LEFT: SECTION A ---------- -->
   <div class="col">
@@ -402,7 +445,7 @@ COST ESTIMATE:</span><input class="grow" name="account.costEstimate">
 </div>
 
 <!-- ══════════════════ SHEET 2 ══════════════════ -->
-<div class="sheet">
+<div class="sheet" data-form="sasa">
 
   <!-- ---------- LEFT: ANAESTHESIA RECORD ---------- -->
   <div class="col">
@@ -533,6 +576,42 @@ BESONDERHEDE</div>
     </div>
     <div id="histRows" style="display:flex;flex-direction:column;gap:.5mm;flex:1"></div>
   </div>
+</div>
+
+<!-- ══════════════ CONSENT SHEET (Blaine and Associates) ══════════════ -->
+<div class="sheet portrait" data-form="blaine">
+
+  <div class="cbanner">CONSENT TO ANAESTHESIA AND PROFESSIONAL FEES</div>
+  <div class="csub">(PLEASE READ CAREFULLY AND SIGN OR INITIAL WHERE INDICATED)</div>
+
+  <ol id="clauses" class="clauses"></ol>
+
+  <div class="csign">
+    <div class="cbox">
+      <div class="cf"><span class="l">Full Name of Patient:</span>
+        <input name="consent.patientName"></div>
+    </div>
+    <div class="cbox">
+      <div class="cf"><span class="l">Name of Parent/Guardian (for minors):</span>
+        <input name="consent.guardianName"></div>
+    </div>
+    <div class="cbox csigbox">
+      <div class="cf"><span class="l">Signature:</span></div>
+      <label class="csigmark"><input type="checkbox" name="consent.signed"> signed</label>
+      <div class="cdate cf"><span class="l">Date:</span>
+        <input type="date" name="consent.signatureDate"></div>
+    </div>
+    <div class="cbox">
+      <div class="cf"><span class="l">Procedure:</span><input name="consent.procedure"></div>
+      <div class="cf"><span class="l">Date:</span><input type="date" name="consent.procedureDate"></div>
+      <div class="cf"><span class="l">Surgeon:</span><input name="consent.surgeon"></div>
+    </div>
+  </div>
+
+  <div class="cfoot">Copyright Blaine and Associates 2019</div>
+  <div class="cnote">Clause wording transcribed from a photograph of the printed form and not
+    verified against the practice's master copy — check it before clinical use. Software
+    © 2026 Remparts Solutions (Pty) Ltd.</div>
 </div>
 
 </form>
@@ -860,6 +939,46 @@ Wanneer laas het u geëet of gedrink:Tyd</div>${inp('history.lastIntake','type="
     ${details}</div>`;
 }).join('');
 
+/* ── consent clauses (Blaine and Associates, 2019) ────────────────
+   Transcribed from a photograph of the printed form. Correct the wording here,
+   in one place, against the practice's master copy before clinical use. The
+   third element, where present, is the field an initial box writes into. */
+const CLAUSES = [
+["Consent",
+ "I, the undersigned, hereby give my consent to the administration of a general anaesthetic, regional anaesthetic, spinal block, epidural block, nerve block, intravenous conscious sedation (or whichever combination of techniques is deemed safe and appropriate by the anaesthetist) for the named procedure. I understand that I may withdraw my consent at any time prior to my procedure."],
+["Unforeseen incidents",
+ "I understand that the specific anaesthetic technique initially described to me may change during the conduct of anaesthesia as decided by the anaesthetist. I also understand that no one can guarantee an incident free anaesthetic, and that should an unforeseen emergency arise, the doctors attending will always act in my best interests but may need to perform lifesaving procedures without my prior consent, to which I agree. I have agreed to provide a full medical history without omissions, so that the anaesthetist may decide on the safest anaesthetic possible for me."],
+["Risks and side effects",
+ "I confirm that I have read the <b>&ldquo;INFORMATION FOR PATIENTS&rdquo;</b> page of this document and accept the general risks/side effects/complications as described therein. I undertake to discuss with my anaesthetist any specific concerns or questions I may have prior to my procedure in order to understand the planned conduct and relevant risk of my anaesthetic. I understand that a comprehensive disclosure of all potential risks and complications associated with anaesthesia is not possible, but that no specifically relevant risks will be withheld from me that may affect my decision making.",
+ "consent.initials.risksAndSideEffects"],
+["Blood transfusion",
+ "I consent to the transfusion of blood, blood products in the event of them being necessary during the conduct of my surgery under anaesthesia."],
+["Personal information",
+ "I confirm that my personal details are correct and undertake to inform Blaine and Associates immediately of any changes. I agree that my personal information may be used by Blaine and Associates for the purpose of record keeping and billing. I understand that Blaine and Associates Anaesthesiologists will not divulge any personal information to a third party (other than disclosed herein) unless required by law. I consent to Blaine and Associates contacting me using the details provided by me."],
+["Professional Fees",
+ "I understand that medical schemes each have their own price list for medical procedures, and there is currently no uniform guideline for what the anaesthetist may charge. I understand that Blaine and Associates are not contracted to any medical aid. I understand that I will receive an account from Blaine and Associates that is separate from the Hospital account and Surgeons account. I agree that I am responsible for discussing the fees of other healthcare professionals with them directly."],
+["PLEASE NOTE",
+ "I understand that Blaine and Associates Anaesthesiologists fees are currently priced above the base tariff rate of the Health Professions Council of South Africa, published in 2006 and 2012. I understand that my specific choice of medical insurance may cover anything from 30% to 100% of their fees. I understand that this may result in me being responsible for a co-payment or gap payment.",
+ "consent.initials.pleaseNote"],
+["Procedure Codes",
+ "I understand that the anaesthetic fee is composed of various individual components or codes, namely the preoperative assessment, the type of procedure, a time-based fee for the procedure, and additional codes/basic-fee modifiers. Fee modifying codes (additional codes that may apply to my specific anaesthetic) are billable for obesity, emergencies, blood pressure control, chronic disease factors, body positioning, age, extended post-operative care, operation site, procedures performed, pain control nerve blocks, and the use of specialized equipment. All codes charged are strictly in keeping with the published coding guidelines of the South African Society of Anaesthesiologists and the South African Medical Association. I understand that even if my Medical Aid recognizes certain procedure codes, it doesn't necessarily imply that my Medical Aid will always reimburse them. I acknowledge that it is my responsibility to ascertain which code exclusions apply to my medical insurance."],
+["Estimation of Fees",
+ "I acknowledge that I am entitled to request a written fee estimation by contacting the Blaine and Associates during office hours at any time prior to my anaesthetic (Tel: 021-840-7006 or email info@blaineassoc.co.za). I understand that I can refer to the website <a href=\"https://www.blaineandassociates.co.za\">www.blaineandassociates.co.za</a> for further patient related and billing information."],
+["Account Settlement",
+ "I understand that I am responsible for the full settlement of my account within 90 days from date of invoice, and that thereafter interest will be levied on all overdue accounts at the rate of 2% per month, calculated daily on the outstanding amount from due date, to date of payment. I agree that I will be responsible for all costs (collection commission, and attorney client charges) incurred should the account remain unpaid and be handed over for collection. I agree to submit my account promptly to my medical aid, so they can pay their portion of the account."],
+["GAP cover",
+ "I understand that I may be liable for a co-payment/gap payment in the event of my medical aid/insurer not covering the full account. I understand that the standard fee structure as discussed above does NOT vary according to whether I have GAP cover insurance or not. I understand that GAP cover abuse by patients or doctors is criminal fraud and will be reported as such."],
+["Complaints",
+ "I agree that should my Medical Aid not provide me with clear answers then I may submit my complaints to the Council for Medical Schemes at complaints@medicalschemes.co.za. or call them on 012-431-0500."],
+];
+
+$('clauses').innerHTML = CLAUSES.map(([lead, body, initials]) => {
+  const box = initials
+    ? `<span class="cinit">${inp(initials, 'placeholder="Initial here please" maxlength="8"')}</span>`
+    : '';
+  return `<li>${box}<span class="lead">${lead}</span>: ${body}</li>`;
+}).join('');
+
 /* ── JSON bridge ─────────────────────────────────────────────── */
 const fields = () => [...form.elements].filter(e => e.name && e.name[0] !== '_');
 const kind = e => e.type === 'checkbox' ? 'boolean'
@@ -868,6 +987,10 @@ const kind = e => e.type === 'checkbox' ? 'boolean'
               : e.type === 'date' || e.type === 'time' || e.type === 'hidden' ? e.type
               : e.tagName === 'SELECT' ? [...e.options].map(o=>o.value).join('|')
               : e.tagName === 'TEXTAREA' ? 'longtext' : 'text';
+
+/* @page cannot be varied per element, so the page size is a stylesheet the form
+   switch rewrites. Appended last, it wins over the landscape rule above. */
+const pageCSS = document.head.appendChild(document.createElement('style'));
 
 const SASA = {
   /** current form state as a nested object (empty fields omitted) */
@@ -889,6 +1012,8 @@ const SASA = {
       if (s && d){ m[i] = map(s,d); any = true; }
     }
     if (any) set(o, 'chart.map', m);
+    o._meta.active = document.body.dataset.form || 'sasa';
+    if (o.consent) o._meta.consentContent = '© Blaine and Associates 2019';
     return o;
   },
   /** populate every field from a matching object; missing keys are cleared */
@@ -911,6 +1036,15 @@ const SASA = {
   },
   /** open the panel and keep it mirroring the form as it is filled in */
   watch(){ live = true; sync(); },
+  /** show one form and hand the printer its page size — 'sasa' | 'blaine' */
+  form(which){
+    which = which === 'blaine' ? 'blaine' : 'sasa';
+    document.body.dataset.form = which;
+    $('formPick').value = which;
+    pageCSS.textContent =
+      `@media print{@page{size:A4 ${which === 'blaine' ? 'portrait' : 'landscape'};margin:0}}`;
+    return which;
+  },
   /* ── observation table → chart columns ──────────────────────────────
      Accepts the natural shape a photo of a flowsheet transcribes into:
      [{time:'16:42', hr:78, bp:'128/74', spo2:99, etco2:35, temp:36.4}, …]
@@ -1004,6 +1138,9 @@ const SASA = {
       if (Object.keys(fields).length){                         // fields first, so a
         SASA.fill(deepMerge(SASA.data(), fields));             // startTime/interval in
         n = leaves(fields);                                    // the payload is in place
+        // a payload that is only a consent belongs on the consent sheet
+        const top = Object.keys(fields).filter(k => k !== 'uncertain' && k !== '_meta');
+        if (top.length === 1 && top[0] === 'consent') SASA.form('blaine');
       }
       const r = obs ? SASA.fromRows(obs) : null;               // before rows are placed
       return { kind: (n && r) ? 'both' : (r ? 'chart' : 'form'), n, r };
@@ -1023,9 +1160,12 @@ const SASA = {
   /** filename stem from whoever the case belongs to */
   stem(){
     const d = SASA.data();
-    const bits = [d.patient?.surname, d.patient?.firstNames, d.case?.date || d.record?.date]
-      .filter(Boolean).join('-').replace(/[^\w\-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
-    return ('sasa-form' + (bits ? '-' + bits : '')).toLowerCase();
+    const blaine = (document.body.dataset.form || 'sasa') === 'blaine';
+    const parts = blaine
+      ? ['blaine-consent', d.consent?.patientName, d.consent?.procedureDate || d.consent?.signatureDate]
+      : ['sasa-form', d.patient?.surname, d.patient?.firstNames, d.case?.date || d.record?.date];
+    return parts.filter(Boolean).join('-')
+      .replace(/[^\w\-]+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'').toLowerCase();
   },
   /** the whole form, filled, as one self-contained file — no server, no assets */
   saveHTML(){
@@ -1066,12 +1206,9 @@ const SASA = {
 };
 window.SASA = SASA;
 
-/* a saved copy carries its state in #preload; the app rebuilds, then fills */
-const preload = $('preload');
-if (preload){
-  try { SASA.fill(JSON.parse(preload.textContent)); }
-  catch(e){ note('Saved state could not be read: ' + e.message); }
-}
+/* the switch also sets the print page size, so run it once on load — a saved copy
+   reopens on whichever form it was saved from */
+SASA.form(document.body.dataset.form);
 
 /* column series an imported table can address */
 const SERIES = { hr:'hr', pulse:'hr', heartrate:'hr', sys:'sys', systolic:'sys', dia:'dia', diastolic:'dia',
@@ -1150,6 +1287,14 @@ function sync(){
 }
 form.addEventListener('input', sync);
 form.addEventListener('change', sync);
+
+/* a saved copy carries its state in #preload; the app rebuilds, then fills.
+   Last, because fill() reaches sync() and note(), which are declared above. */
+const preload = $('preload');
+if (preload){
+  try { SASA.fill(JSON.parse(preload.textContent)); }
+  catch(e){ note('Saved state could not be read: ' + e.message); }
+}
 $('io').addEventListener('input', () => { live = false; autoApply(400); });
 $('io').addEventListener('paste', () => { live = false; autoApply(30); });
 </script>
