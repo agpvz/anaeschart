@@ -15,6 +15,9 @@
     },
     {
       "$ref": "#/$defs/mediclinicAdmission"
+    },
+    {
+      "$ref": "#/$defs/pathcareLab"
     }
   ],
   "$defs": {
@@ -2050,6 +2053,329 @@
         }
       }
     },
+    "pathcareLab": {
+      "type": "object",
+      "title": "PathCare laboratory report",
+      "additionalProperties": false,
+      "required": [
+        "specimens"
+      ],
+      "properties": {
+        "report": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "layout": {
+              "type": "string",
+              "enum": [
+                "cumulative",
+                "single"
+              ]
+            },
+            "labRef": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "requisitionNo": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "specimenNo": {
+              "type": "string"
+            },
+            "laboratory": {
+              "type": "string"
+            },
+            "labAddress": {
+              "type": "string"
+            },
+            "labTel": {
+              "type": "string"
+            },
+            "practiceNo": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "reportTo": {
+              "type": "string"
+            },
+            "reportToUnit": {
+              "type": "string"
+            },
+            "reportToAddress": {
+              "type": "string"
+            },
+            "referringDoctor": {
+              "type": "string"
+            },
+            "discipline": {
+              "type": "string"
+            },
+            "testsRequested": {
+              "type": "string"
+            },
+            "specimenType": {
+              "type": "string"
+            },
+            "referralIcd10": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "Final",
+                "Prelim"
+              ]
+            },
+            "collectedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "receivedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "generatedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "authorisedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "printedAt": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+            },
+            "authorisedBy": {
+              "type": "string"
+            },
+            "headerRef": {
+              "type": "string"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "pages": {
+              "type": "integer"
+            }
+          }
+        },
+        "patient": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "fullName": {
+              "type": "string"
+            },
+            "surname": {
+              "type": "string"
+            },
+            "firstNames": {
+              "type": "string"
+            },
+            "idNo": {
+              "type": "string",
+              "pattern": "^\\d{13}$"
+            },
+            "birthDate": {
+              "type": "string",
+              "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+            },
+            "sex": {
+              "type": "string",
+              "enum": [
+                "M",
+                "F"
+              ]
+            },
+            "ageText": {
+              "type": "string"
+            },
+            "ageYears": {
+              "type": "number"
+            },
+            "contactNo": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "patientRefNo": {
+              "type": [
+                "string",
+                "number"
+              ]
+            },
+            "medAid": {
+              "type": "string"
+            },
+            "medAidNo": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          }
+        },
+        "specimens": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "collectedAt"
+            ],
+            "properties": {
+              "collectedAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "receivedAt": {
+                "type": "string",
+                "pattern": "^\\d{4}-\\d{2}-\\d{2}T([01]\\d|2[0-3]):[0-5]\\d$"
+              },
+              "requisitionNo": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "labRef": {
+                "type": [
+                  "string",
+                  "number"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "Final",
+                  "Prelim"
+                ]
+              },
+              "discipline": {
+                "type": "string"
+              },
+              "results": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "analyte"
+                  ],
+                  "properties": {
+                    "analyte": {
+                      "type": "string"
+                    },
+                    "label": {
+                      "type": "string"
+                    },
+                    "specimenPrefix": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "enum": [
+                        "P",
+                        "S",
+                        "B",
+                        "U",
+                        "CSF",
+                        null
+                      ]
+                    },
+                    "panel": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "enum": [
+                        "fbc",
+                        "ue",
+                        "lft",
+                        "bone",
+                        "lipogram",
+                        "inflammatory",
+                        "cardiac",
+                        "coagulation",
+                        "glycaemic",
+                        "thyroid",
+                        "bloodGas",
+                        "ironStudies",
+                        "preAnalytical",
+                        null
+                      ]
+                    },
+                    "value": {
+                      "type": "number"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "refLow": {
+                      "type": "number"
+                    },
+                    "refHigh": {
+                      "type": "number"
+                    },
+                    "refText": {
+                      "type": "string"
+                    },
+                    "flags": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "H",
+                          "L",
+                          "*H",
+                          "*L",
+                          "#"
+                        ]
+                      }
+                    },
+                    "derived": {
+                      "type": "boolean"
+                    },
+                    "comment": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "uncertain": {
+          "type": "array",
+          "description": "Dotted paths recorded but not read confidently.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "_meta": {
+          "type": "object",
+          "description": "Copyright and provenance block written by the exporter."
+        }
+      }
+    },
     "review": {
       "type": "object",
       "additionalProperties": false,
@@ -2063,7 +2389,8 @@
           "enum": [
             "sasa-case",
             "blaine-consent-v2019",
-            "mediclinic-admission"
+            "mediclinic-admission",
+            "pathcare-lab"
           ]
         },
         "data": {
@@ -2076,6 +2403,9 @@
             },
             {
               "$ref": "#/$defs/mediclinicAdmission"
+            },
+            {
+              "$ref": "#/$defs/pathcareLab"
             }
           ]
         },

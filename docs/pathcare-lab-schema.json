@@ -1,0 +1,265 @@
+{
+  "_meta": {
+    "formId": "pathcare-lab",
+    "title": "PathCare laboratory report",
+    "issuer": "PathCare (Dietrich Voigt Mia (Pty) Ltd and regional partnerships)",
+    "layouts": ["cumulative", "single"],
+    "nature": "machine-printed laboratory report; no handwriting, no fields completed by hand",
+    "note": "Field map and analyte dictionary only. No patient data from any real report is recorded here — value entries are types, units and format patterns."
+  },
+
+  "layouts": {
+    "cumulative": {
+      "title": "Cumulative Report",
+      "shape": "matrix — one row per analyte, one column per specimen collection",
+      "orientation": "landscape",
+      "columnHeader": ["collection date", "collection time", "requisition number", "status"],
+      "rowHeader": ["analyte label", "reference range and unit (one cell)"],
+      "paging": "Page N of M, footer; analytes continue across pages, columns repeat",
+      "emptyCell": "analyte not performed on that specimen — never a missing or null result"
+    },
+    "single": {
+      "title": "FINAL REPORT / PRELIMINARY REPORT",
+      "shape": "one specimen, one section per discipline (BIOCHEMISTRY, HAEMATOLOGY, …)",
+      "orientation": "portrait, often photographed rotated",
+      "columns": ["Test", "Result", "Flag", "Reference"],
+      "note": "One lab ref may produce several single reports — one per discipline, each with its own specimen number and authorising pathologist."
+    }
+  },
+
+  "fields": {
+    "report.layout": "\"cumulative\"|\"single\"",
+    "report.labRef": "text",
+    "report.requisitionNo": "text",
+    "report.specimenNo": "text",
+    "report.laboratory": "text",
+    "report.labAddress": "text",
+    "report.labTel": "text",
+    "report.practiceNo": "text",
+    "report.reportTo": "text",
+    "report.reportToUnit": "text",
+    "report.reportToAddress": "text",
+    "report.referringDoctor": "text",
+    "report.discipline": "text",
+    "report.testsRequested": "text",
+    "report.specimenType": "text",
+    "report.referralIcd10": "text",
+    "report.status": "\"Final\"|\"Prelim\"",
+    "report.collectedAt": "datetime",
+    "report.receivedAt": "datetime",
+    "report.generatedAt": "datetime",
+    "report.authorisedAt": "datetime",
+    "report.authorisedBy": "text",
+    "report.page": "integer",
+    "report.pages": "integer",
+    "report.printedAt": "datetime",
+    "report.headerRef": "text",
+
+    "patient.title": "text",
+    "patient.fullName": "text",
+    "patient.surname": "text",
+    "patient.firstNames": "text",
+    "patient.idNo": "text",
+    "patient.birthDate": "date",
+    "patient.sex": "\"M\"|\"F\"",
+    "patient.ageText": "text",
+    "patient.ageYears": "number",
+    "patient.contactNo": "text",
+    "patient.email": "text",
+    "patient.patientRefNo": "text",
+    "patient.medAid": "text",
+    "patient.medAidNo": "text"
+  },
+
+  "arrays": {
+    "specimens[]": {
+      "_note": "One entry per collection. A cumulative report yields one per column; a single report yields exactly one.",
+      "collectedAt": "datetime — the blood draw, and the only date a result may be filed under",
+      "receivedAt": "datetime",
+      "requisitionNo": "text",
+      "labRef": "text",
+      "status": "\"Final\"|\"Prelim\"",
+      "results": "result[]"
+    },
+    "result": {
+      "analyte": "canonical key from the analyte dictionary",
+      "label": "the label exactly as printed, prefix included",
+      "specimenPrefix": "\"P\"|\"S\"|\"B\"|\"U\"|\"CSF\"|null",
+      "panel": "canonical panel key",
+      "value": "number, or string for a non-numeric result",
+      "text": "non-numeric result as printed (ABSENT, NOT SPECIFIED, HAEMOLYSED)",
+      "unit": "text",
+      "refLow": "number",
+      "refHigh": "number",
+      "refText": "reference exactly as printed when it is not a plain low-high pair",
+      "flags": "flag[]",
+      "derived": "boolean — calculated by the laboratory, not measured",
+      "comment": "text"
+    }
+  },
+
+  "flags": {
+    "_note": "Printed after the value. Several may apply at once — 3.2 # L carries both delta and low. The legend is printed at the foot of every single report.",
+    "H": "High — above the reference range",
+    "L": "Low — below the reference range",
+    "*H": "Critically high — usually also tinted or boxed in red",
+    "*L": "Critically low",
+    "#": "Delta checked — differs materially from the previous result on the same patient"
+  },
+
+  "specimenPrefixes": {
+    "P": "plasma", "S": "serum", "B": "whole blood", "U": "urine", "CSF": "cerebrospinal fluid",
+    "_note": "PathCare prefixes the analyte with the specimen type. P-CREATININE and S-CREATININE are the same analyte measured on different matrices; keep the prefix in `label` and `specimenPrefix`, and map both to the canonical `creatinine`."
+  },
+
+  "panels": {
+    "_note": "Industry-standard groupings. Assign each result from the analyte dictionary — never from where it happens to sit on the page, since a report prints analytes in laboratory order, not panel order.",
+    "fbc": { "name": "Full blood count", "members": ["haemoglobin", "mcv", "wcc", "platelets", "rcc", "haematocrit", "mch", "mchc", "rdw", "neutrophils", "lymphocytes", "monocytes", "eosinophils", "basophils"] },
+    "ue": { "name": "Urea and electrolytes", "members": ["sodium", "potassium", "chloride", "bicarbonate", "anionGap", "urea", "creatinine", "egfr", "urate"] },
+    "lft": { "name": "Liver function tests", "members": ["totalProtein", "albumin", "globulin", "bilirubinTotal", "bilirubinConjugated", "alt", "ast", "alp", "ggt", "ldh"] },
+    "bone": { "name": "Bone and mineral profile", "members": ["calcium", "calciumAdjusted", "magnesium", "phosphate"] },
+    "lipogram": { "name": "Lipogram", "members": ["cholesterol", "triglyceride", "hdl", "nonHdlCholesterol", "cholHdlRatio", "ldl", "lipoproteinA"] },
+    "inflammatory": { "name": "Inflammatory markers", "members": ["crp", "esr", "procalcitonin"] },
+    "cardiac": { "name": "Cardiac markers", "members": ["troponinT", "troponinI", "ck", "ckmb", "ntProBnp"] },
+    "coagulation": { "name": "Coagulation", "members": ["inr", "pt", "aptt", "fibrinogen", "dDimer"] },
+    "glycaemic": { "name": "Glucose and glycaemic control", "members": ["glucose", "hba1c"] },
+    "thyroid": { "name": "Thyroid function", "members": ["tsh", "ft4", "ft3"] },
+    "bloodGas": { "name": "Blood gas", "members": ["ph", "pco2", "po2", "baseExcess", "lactate"] },
+    "ironStudies": { "name": "Iron studies", "members": ["iron", "ferritin", "transferrin", "transferrinSaturation"] },
+    "preAnalytical": { "name": "Sample appearance", "members": ["lipaemic", "icterus", "haemolysis", "lipaemia", "specimenTaken"] }
+  },
+
+  "analytes": {
+    "_note": "canonical → { aliases as printed, panel, usual unit, derived }. Aliases are matched after stripping the specimen prefix and case-folding.",
+
+    "lipaemic":        { "aliases": ["LIPAEMIC"], "panel": "preAnalytical", "unit": null, "resultType": "text" },
+    "icterus":         { "aliases": ["ICTERUS"], "panel": "preAnalytical", "unit": null, "resultType": "text" },
+    "haemolysis":      { "aliases": ["HAEMOLYSIS"], "panel": "preAnalytical", "unit": null, "resultType": "text" },
+    "lipaemia":        { "aliases": ["LIPAEMIA"], "panel": "preAnalytical", "unit": null, "resultType": "text" },
+    "specimenTaken":   { "aliases": ["SPECIMEN TAKEN"], "panel": "preAnalytical", "unit": null, "resultType": "text" },
+
+    "sodium":          { "aliases": ["SODIUM"], "panel": "ue", "unit": "mmol/L" },
+    "potassium":       { "aliases": ["POTASSIUM"], "panel": "ue", "unit": "mmol/L" },
+    "chloride":        { "aliases": ["CHLORIDE"], "panel": "ue", "unit": "mmol/L" },
+    "bicarbonate":     { "aliases": ["BICARBONATE", "CO2", "TOTAL CO2"], "panel": "ue", "unit": "mmol/L" },
+    "anionGap":        { "aliases": ["ANION GAP"], "panel": "ue", "unit": "mmol/L", "derived": true, "formula": "Na − (Cl + HCO3)" },
+    "urea":            { "aliases": ["UREA"], "panel": "ue", "unit": "mmol/L" },
+    "urate":           { "aliases": ["URATE", "URIC ACID"], "panel": "ue", "unit": "mmol/L" },
+    "creatinine":      { "aliases": ["CREATININE", "CREATININE (ENZYMATIC)"], "panel": "ue", "unit": "umol/L" },
+    "egfr":            { "aliases": ["CKD-EPI (GFR ESTIMATE)", "EGFR", "GFR ESTIMATE"], "panel": "ue", "unit": "mL/min/1.73m2", "derived": true, "formula": "CKD-EPI from creatinine" },
+
+    "calcium":         { "aliases": ["CALCIUM (TOTAL)", "CALCIUM"], "panel": "bone", "unit": "mmol/L" },
+    "calciumAdjusted": { "aliases": ["CALCIUM (ADJUSTED)", "CORRECTED CALCIUM"], "panel": "bone", "unit": "mmol/L", "derived": true, "formula": "albumin-adjusted calcium" },
+    "magnesium":       { "aliases": ["MAGNESIUM"], "panel": "bone", "unit": "mmol/L" },
+    "phosphate":       { "aliases": ["PHOSPHATE"], "panel": "bone", "unit": "mmol/L" },
+
+    "cholesterol":     { "aliases": ["CHOLESTEROL"], "panel": "lipogram", "unit": "mmol/L" },
+    "triglyceride":    { "aliases": ["TRIGLYCERIDE", "TRIGLYCERIDES"], "panel": "lipogram", "unit": "mmol/L" },
+    "hdl":             { "aliases": ["HDL CHOLESTEROL", "HDL-CHOL"], "panel": "lipogram", "unit": "mmol/L" },
+    "nonHdlCholesterol": { "aliases": ["NON-HDL-CHOL", "NON HDL CHOLESTEROL"], "panel": "lipogram", "unit": "mmol/L", "derived": true, "formula": "cholesterol − HDL" },
+    "cholHdlRatio":    { "aliases": ["CHOL:HDL RATIO"], "panel": "lipogram", "unit": null, "derived": true, "formula": "cholesterol ÷ HDL" },
+    "ldl":             { "aliases": ["LDL CHOLESTEROL", "LDL CHOLESTEROL (MEAS)", "LDL CHOLESTEROL (CALC)"], "panel": "lipogram", "unit": "mmol/L", "note": "(meas) is measured, (calc) is Friedewald-derived — keep the qualifier in `label`." },
+    "lipoproteinA":    { "aliases": ["LIPOPROTEIN(A)", "LP(A)"], "panel": "lipogram", "unit": "mg/dl" },
+
+    "totalProtein":    { "aliases": ["TOTAL PROTEIN"], "panel": "lft", "unit": "g/L" },
+    "albumin":         { "aliases": ["ALBUMIN"], "panel": "lft", "unit": "g/L" },
+    "globulin":        { "aliases": ["GLOBULIN"], "panel": "lft", "unit": "g/L", "derived": true, "formula": "total protein − albumin" },
+    "bilirubinTotal":  { "aliases": ["TOTAL BILIRUBIN", "BILIRUBIN TOTAL"], "panel": "lft", "unit": "umol/L" },
+    "bilirubinConjugated": { "aliases": ["CONJUGATED BILIRUBIN", "DIRECT BILIRUBIN"], "panel": "lft", "unit": "umol/L" },
+    "alt":             { "aliases": ["ALT", "ALANINE TRANSAMINASE"], "panel": "lft", "unit": "U/L" },
+    "ast":             { "aliases": ["AST", "ASPARTATE TRANSAMINASE"], "panel": "lft", "unit": "U/L" },
+    "alp":             { "aliases": ["ALP", "ALKALINE PHOSPHATASE"], "panel": "lft", "unit": "U/L" },
+    "ggt":             { "aliases": ["GGT", "GAMMA GT"], "panel": "lft", "unit": "U/L" },
+    "ldh":             { "aliases": ["LDH", "LACTATE DEHYDROGENASE"], "panel": "lft", "unit": "U/L" },
+
+    "crp":             { "aliases": ["C-REACTIVE PROTEIN", "CRP"], "panel": "inflammatory", "unit": "mg/L" },
+    "esr":             { "aliases": ["ESR"], "panel": "inflammatory", "unit": "mm/hr" },
+    "procalcitonin":   { "aliases": ["PROCALCITONIN", "PCT"], "panel": "inflammatory", "unit": "ug/L" },
+
+    "haemoglobin":     { "aliases": ["HAEMOGLOBIN", "HB"], "panel": "fbc", "unit": "g/dL" },
+    "mcv":             { "aliases": ["MCV"], "panel": "fbc", "unit": "fl" },
+    "wcc":             { "aliases": ["WHITE CELL COUNT", "WCC", "LEUCOCYTES"], "panel": "fbc", "unit": "10^9/L" },
+    "platelets":       { "aliases": ["PLATELETS", "PLATELET COUNT"], "panel": "fbc", "unit": "10^9/L" },
+    "rcc":             { "aliases": ["RED CELL COUNT", "RCC"], "panel": "fbc", "unit": "10^12/L" },
+    "haematocrit":     { "aliases": ["HAEMATOCRIT", "HCT"], "panel": "fbc", "unit": "L/L" },
+    "mch":             { "aliases": ["MCH"], "panel": "fbc", "unit": "pg" },
+    "mchc":            { "aliases": ["MCHC"], "panel": "fbc", "unit": "g/dL" },
+    "rdw":             { "aliases": ["RDW"], "panel": "fbc", "unit": "%" },
+    "neutrophils":     { "aliases": ["NEUTROPHILS"], "panel": "fbc", "unit": "10^9/L" },
+    "lymphocytes":     { "aliases": ["LYMPHOCYTES"], "panel": "fbc", "unit": "10^9/L" },
+    "monocytes":       { "aliases": ["MONOCYTES"], "panel": "fbc", "unit": "10^9/L" },
+    "eosinophils":     { "aliases": ["EOSINOPHILS"], "panel": "fbc", "unit": "10^9/L" },
+    "basophils":       { "aliases": ["BASOPHILS"], "panel": "fbc", "unit": "10^9/L" },
+
+    "troponinT":       { "aliases": ["TROPONIN T", "HS TROPONIN T"], "panel": "cardiac", "unit": "ng/L" },
+    "troponinI":       { "aliases": ["TROPONIN I"], "panel": "cardiac", "unit": "ng/L" },
+    "ck":              { "aliases": ["CK", "CREATINE KINASE"], "panel": "cardiac", "unit": "U/L" },
+    "ckmb":            { "aliases": ["CK-MB"], "panel": "cardiac", "unit": "U/L" },
+    "ntProBnp":        { "aliases": ["NT-PROBNP", "PRO-BNP"], "panel": "cardiac", "unit": "ng/L" },
+
+    "inr":             { "aliases": ["INR"], "panel": "coagulation", "unit": null },
+    "pt":              { "aliases": ["PT", "PROTHROMBIN TIME"], "panel": "coagulation", "unit": "s" },
+    "aptt":            { "aliases": ["APTT", "PTT"], "panel": "coagulation", "unit": "s" },
+    "fibrinogen":      { "aliases": ["FIBRINOGEN"], "panel": "coagulation", "unit": "g/L" },
+    "dDimer":          { "aliases": ["D-DIMER"], "panel": "coagulation", "unit": "mg/L" },
+
+    "glucose":         { "aliases": ["GLUCOSE"], "panel": "glycaemic", "unit": "mmol/L" },
+    "hba1c":           { "aliases": ["HBA1C", "GLYCATED HAEMOGLOBIN"], "panel": "glycaemic", "unit": "%" },
+    "tsh":             { "aliases": ["TSH"], "panel": "thyroid", "unit": "mIU/L" },
+    "ft4":             { "aliases": ["FREE T4", "FT4"], "panel": "thyroid", "unit": "pmol/L" },
+    "ft3":             { "aliases": ["FREE T3", "FT3"], "panel": "thyroid", "unit": "pmol/L" },
+    "lactate":         { "aliases": ["LACTATE"], "panel": "bloodGas", "unit": "mmol/L" },
+    "ferritin":        { "aliases": ["FERRITIN"], "panel": "ironStudies", "unit": "ug/L" }
+  },
+
+  "referenceFormats": {
+    "_note": "The cumulative report packs range and unit into one cell. Split them; keep anything that is not a plain pair in refText.",
+    "136-145 mmol/L": { "refLow": 136, "refHigh": 145, "unit": "mmol/L" },
+    "22.0-28.0 mmol/L": { "refLow": 22.0, "refHigh": 28.0, "unit": "mmol/L" },
+    "0.21 - 0.42 mmol/L": { "refLow": 0.21, "refHigh": 0.42, "unit": "mmol/L" },
+    "< 5.0 mmol/L": { "refHigh": 5.0, "unit": "mmol/L", "refText": "< 5.0" },
+    "> 1.0 mmol/L": { "refLow": 1.0, "unit": "mmol/L", "refText": "> 1.0" },
+    ">=60": { "refLow": 60, "refText": ">=60" },
+    "0 - 50 mg/dl": { "refLow": 0, "refHigh": 50, "unit": "mg/dl" },
+    "12.5 - 16.5 g/dL": { "refLow": 12.5, "refHigh": 16.5, "unit": "g/dL" },
+    "mmol/L": { "unit": "mmol/L", "_note": "unit with no range — a derived value such as NON-HDL-CHOL" }
+  },
+
+  "alignmentHazard": {
+    "_severity": "highest",
+    "problem": "On a photographed cumulative report the value grid can sit a whole row out of register with the analyte labels — paper curvature shifts the right of the sheet against the left. Every result then lands on its neighbour, producing a plausible, internally consistent, entirely wrong report.",
+    "detection": [
+      "Range check: each value must fall in a believable relationship to the reference range printed on its own row. A sodium of 4.4 against 136-145 is a shift, not a critical result.",
+      "Flag agreement: a value flagged L must actually be below its refLow, and H above its refHigh. Disagreement means the row is out of register.",
+      "Derived arithmetic: nonHdlCholesterol = cholesterol − hdl; cholHdlRatio = cholesterol ÷ hdl; globulin = totalProtein − albumin; anionGap = Na − (Cl + HCO3). If these do not reconcile, the rows are misaligned.",
+      "Cross-layout: where a single report covers the same specimen, its values are ground truth for that column."
+    ],
+    "response": "Re-seat the whole column against the labels and re-read. Do not correct one analyte and leave the rest."
+  },
+
+  "anchors": {
+    "wordmark": "PathCare in blue script with the red-and-blue microscope roundel",
+    "cumulativeTitle": "Cumulative Report in italic script, top left",
+    "singleTitle": "FINAL REPORT - Lab Ref : <digits>, or PRELIMINARY REPORT",
+    "entity": "Dietrich Voigt Mia (Pty) Ltd beneath the wordmark, with the regional partnership name (e.g. PathCare Winelands & Overberg)",
+    "practiceNo": "Practice No: / Prac.No. : followed by digits",
+    "flagLegend": "H=High, L=Low, *H=Critically High, *L=Critically Low, #=Delta Checked",
+    "footerCumulative": "Confidential Medical Results, with Page N of M",
+    "footerSingle": "END OF REPORT : Total Number of Pages : N",
+    "authorisation": "Authorised on <datetime> and For consultation, contact a Chemical Pathologist / Haematopathologist",
+    "criticalTint": "critically abnormal values are printed white on a solid red block"
+  },
+
+  "crosswalk": {
+    "_note": "Where a value also exists on the SASA form or the admission sheet.",
+    "patient.idNo": "account.idNo",
+    "patient.birthDate": "patient.birthDate",
+    "patient.fullName": ["patient.surname", "patient.firstNames"],
+    "patient.medAid": "account.medFund",
+    "patient.medAidNo": "account.number",
+    "report.reportTo": "case.hospital",
+    "report.referringDoctor": "case.surgeon",
+    "report.referralIcd10": "case.icd10",
+    "analyte:haemoglobin": "record.other — the SASA form has no structured lab block; a preoperative Hb is normally written into the free-text assessment"
+  }
+}

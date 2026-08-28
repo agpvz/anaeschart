@@ -187,6 +187,49 @@ function lint(data) {
     warnings.push('member.idNo equals patient.idNo — confirm the main member really is the patient');
   }
 
+  // Lab reports: a flag that disagrees with its own reference range, or derived
+  // arithmetic that will not reconcile, is the signature of a row read off by one.
+  (payload.specimens ?? []).forEach((specimen, s) => {
+    const where = `specimens[${s}] (${specimen.collectedAt ?? 'no collection time'})`;
+    const by = {};
+    (specimen.results ?? []).forEach((r, i) => {
+      if (r.analyte) by[r.analyte] = r;
+      if (typeof r.value !== 'number') return;
+      const at = `${where}.results[${i}] ${r.label ?? r.analyte}`;
+      const flags = r.flags ?? [];
+      const low = flags.some(f => f === 'L' || f === '*L');
+      const high = flags.some(f => f === 'H' || f === '*H');
+      if (low && r.refLow != null && r.value >= r.refLow) {
+        warnings.push(`${at}: flagged low at ${r.value} but reference starts at ${r.refLow} — check the row is not shifted`);
+      }
+      if (high && r.refHigh != null && r.value <= r.refHigh) {
+        warnings.push(`${at}: flagged high at ${r.value} but reference ends at ${r.refHigh} — check the row is not shifted`);
+      }
+      if (!low && !high) {
+        if (r.refLow != null && r.value < r.refLow) warnings.push(`${at}: ${r.value} is below ${r.refLow} but carries no low flag`);
+        if (r.refHigh != null && r.value > r.refHigh) warnings.push(`${at}: ${r.value} is above ${r.refHigh} but carries no high flag`);
+      }
+    });
+
+    const near = (a, b, tol) => Math.abs(a - b) <= tol;
+    const val = k => (typeof by[k]?.value === 'number' ? by[k].value : null);
+    const checks = [
+      ['anionGap', () => val('sodium') - (val('chloride') + val('bicarbonate')), 1,
+        ['sodium', 'chloride', 'bicarbonate']],
+      ['nonHdlCholesterol', () => val('cholesterol') - val('hdl'), 0.15, ['cholesterol', 'hdl']],
+      ['cholHdlRatio', () => val('cholesterol') / val('hdl'), 0.2, ['cholesterol', 'hdl']],
+      ['globulin', () => val('totalProtein') - val('albumin'), 1.5, ['totalProtein', 'albumin']],
+    ];
+    for (const [target, compute, tol, needs] of checks) {
+      if (val(target) == null || needs.some(k => val(k) == null)) continue;
+      const expected = compute();
+      if (!near(val(target), expected, tol)) {
+        warnings.push(`${where}: ${target} reads ${val(target)} but ${needs.join(' / ')} give ${
+          Math.round(expected * 100) / 100} — rows may be misaligned, or the laboratory disagrees with itself`);
+      }
+    }
+  });
+
   for (const clause of ['risksAndSideEffects', 'pleaseNote']) {
     if (payload.consent && !at(payload, `consent.initials.${clause}`)) {
       warnings.push(`consent.initials.${clause} is absent — clause not initialled`);

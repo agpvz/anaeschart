@@ -281,18 +281,106 @@ const mediclinicAdmission = {
   },
 };
 
+const PANELS = ['fbc', 'ue', 'lft', 'bone', 'lipogram', 'inflammatory', 'cardiac',
+  'coagulation', 'glycaemic', 'thyroid', 'bloodGas', 'ironStudies', 'preAnalytical'];
+
+const pathcareLab = {
+  type: 'object',
+  title: 'PathCare laboratory report',
+  additionalProperties: false,
+  required: ['specimens'],
+  properties: {
+    report: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        layout: { type: 'string', enum: ['cumulative', 'single'] },
+        labRef: { ...TEXT }, requisitionNo: { ...TEXT }, specimenNo: { type: 'string' },
+        laboratory: { type: 'string' }, labAddress: { type: 'string' },
+        labTel: { type: 'string' }, practiceNo: { ...TEXT },
+        reportTo: { type: 'string' }, reportToUnit: { type: 'string' },
+        reportToAddress: { type: 'string' }, referringDoctor: { type: 'string' },
+        discipline: { type: 'string' }, testsRequested: { type: 'string' },
+        specimenType: { type: 'string' }, referralIcd10: { type: 'string' },
+        status: { type: 'string', enum: ['Final', 'Prelim'] },
+        collectedAt: { type: 'string', pattern: DATETIME },
+        receivedAt: { type: 'string', pattern: DATETIME },
+        generatedAt: { type: 'string', pattern: DATETIME },
+        authorisedAt: { type: 'string', pattern: DATETIME },
+        printedAt: { type: 'string', pattern: DATETIME },
+        authorisedBy: { type: 'string' }, headerRef: { type: 'string' },
+        page: { type: 'integer' }, pages: { type: 'integer' },
+      },
+    },
+    patient: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        title: { type: 'string' }, fullName: { type: 'string' },
+        surname: { type: 'string' }, firstNames: { type: 'string' },
+        idNo: { type: 'string', pattern: ID13 },
+        birthDate: { type: 'string', pattern: DATE },
+        sex: { type: 'string', enum: ['M', 'F'] },
+        ageText: { type: 'string' }, ageYears: { type: 'number' },
+        contactNo: { type: 'string' }, email: { type: 'string' },
+        patientRefNo: { ...TEXT }, medAid: { type: 'string' }, medAidNo: { ...TEXT },
+      },
+    },
+    specimens: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['collectedAt'],
+        properties: {
+          collectedAt: { type: 'string', pattern: DATETIME },
+          receivedAt: { type: 'string', pattern: DATETIME },
+          requisitionNo: { ...TEXT }, labRef: { ...TEXT },
+          status: { type: 'string', enum: ['Final', 'Prelim'] },
+          discipline: { type: 'string' },
+          results: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['analyte'],
+              properties: {
+                analyte: { type: 'string' },
+                label: { type: 'string' },
+                specimenPrefix: { type: ['string', 'null'], enum: ['P', 'S', 'B', 'U', 'CSF', null] },
+                panel: { type: ['string', 'null'], enum: [...PANELS, null] },
+                value: { type: 'number' },
+                text: { type: 'string' },
+                unit: { type: ['string', 'null'] },
+                refLow: { type: 'number' }, refHigh: { type: 'number' },
+                refText: { type: 'string' },
+                flags: { type: 'array', items: { type: 'string', enum: ['H', 'L', '*H', '*L', '#'] } },
+                derived: { type: 'boolean' },
+                comment: { type: 'string' },
+              },
+            },
+          },
+        },
+      },
+    },
+    uncertain,
+    _meta: meta,
+  },
+};
+
 // A second pass returns the payload wrapped with its audit trail.
 const review = {
   type: 'object',
   additionalProperties: false,
   required: ['form', 'data'],
   properties: {
-    form: { type: 'string', enum: ['sasa-case', 'blaine-consent-v2019', 'mediclinic-admission'] },
+    form: { type: 'string', enum: ['sasa-case', 'blaine-consent-v2019', 'mediclinic-admission', 'pathcare-lab'] },
     data: {
       anyOf: [
         { $ref: '#/$defs/sasaCase' },
         { $ref: '#/$defs/blaineConsent' },
         { $ref: '#/$defs/mediclinicAdmission' },
+        { $ref: '#/$defs/pathcareLab' },
       ],
     },
     review: {
@@ -349,8 +437,9 @@ const schema = {
     { $ref: '#/$defs/sasaCase' },
     { $ref: '#/$defs/blaineConsent' },
     { $ref: '#/$defs/mediclinicAdmission' },
+    { $ref: '#/$defs/pathcareLab' },
   ],
-  $defs: { sasaCase, blaineConsent, mediclinicAdmission, review },
+  $defs: { sasaCase, blaineConsent, mediclinicAdmission, pathcareLab, review },
 };
 
 writeFileSync(join(root, 'docs/extraction.schema.json'), JSON.stringify(schema, null, 2) + '\n');

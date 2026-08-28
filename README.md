@@ -150,6 +150,7 @@ apart from everything else on the clipboard — and transcription:
 |---|---|---|
 | Blaine and Associates consent to anaesthesia and professional fees | `docs/blaine-consent-schema.json` | `docs/blaine-consent-prompt.md` |
 | Mediclinic admission summary (form D 2700) | `docs/mediclinic-admission-schema.json` | `docs/mediclinic-admission-prompt.md` |
+| PathCare lab report — cumulative and single | `docs/pathcare-lab-schema.json` | `docs/pathcare-lab-prompt.md` |
 
 Each map ends in a `crosswalk` block naming the SASA paths its fields feed, so a consent
 or admission photo can seed the case before the record itself is transcribed. Read the
@@ -171,6 +172,11 @@ field the form doesn't have. Warnings are the house rules a schema can't state: 
 where an omission belongs, an `uncertain` path with no value behind it, observations off
 the grid, a systolic below its diastolic, an identity number disagreeing with its date of
 birth. Warnings don't fail the run — each one is a question for the anaesthetist.
+
+On a lab report the warnings do more work: a value flagged `L` that is not below its own
+reference range, or derived arithmetic that will not reconcile (`nonHdlCholesterol`,
+`cholHdlRatio`, `globulin`, `anionGap`), is the signature of a result row read one line out
+of register — the failure a photographed cumulative report invites and the eye cannot see.
 
 The SASA half of the schema is generated, so it can't drift from the form:
 
