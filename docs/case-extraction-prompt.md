@@ -90,6 +90,11 @@ porphyria allergy medications cortisone hypertension heartDisease thrombosis exe
 asthma recentCold snoring diabetesThyroid jaundice kidney muscleWeakness bleeding
 epilepsy pregnant teeth alcohol smoking reflux anythingElse`
 
+`porphyria` and `reflux` take `.yn` but **not** `.details`: the form gives their details
+cell over to other fields — weight and height beside `porphyria`, last oral intake beside
+`reflux`. Put those readings in `history.weightKg`, `history.heightM` and
+`history.lastIntake`. A `.details` string sent for either is dropped on import.
+
 ## observations
 
 One object per timestamped column on the chart or monitor trend, ascending:

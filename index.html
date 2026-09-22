@@ -609,9 +609,7 @@ BESONDERHEDE</div>
   </div>
 
   <div class="cfoot">Copyright Blaine and Associates 2019</div>
-  <div class="cnote">Clause wording transcribed from a photograph of the printed form and not
-    verified against the practice's master copy — check it before clinical use. Software
-    © 2026 Remparts Solutions (Pty) Ltd.</div>
+  <div class="cnote" id="cnote"></div>
 </div>
 
 </form>
@@ -940,9 +938,11 @@ Wanneer laas het u geëet of gedrink:Tyd</div>${inp('history.lastIntake','type="
 }).join('');
 
 /* ── consent clauses (Blaine and Associates, 2019) ────────────────
-   Transcribed from a photograph of the printed form. Correct the wording here,
-   in one place, against the practice's master copy before clinical use. The
-   third element, where present, is the field an initial box writes into. */
+   Transcribed from a photograph of the printed form, verbatim — including the
+   source's own redundancies, which are the document's and not ours to tidy.
+   Check the wording against the practice's master copy, correct it here in one
+   place, then set CLAUSES_VERIFIED to true to clear the caveat on the sheet. */
+const CLAUSES_VERIFIED = false;
 const CLAUSES = [
 ["Consent",
  "I, the undersigned, hereby give my consent to the administration of a general anaesthetic, regional anaesthetic, spinal block, epidural block, nerve block, intravenous conscious sedation (or whichever combination of techniques is deemed safe and appropriate by the anaesthetist) for the named procedure. I understand that I may withdraw my consent at any time prior to my procedure."],
@@ -956,7 +956,7 @@ const CLAUSES = [
 ["Personal information",
  "I confirm that my personal details are correct and undertake to inform Blaine and Associates immediately of any changes. I agree that my personal information may be used by Blaine and Associates for the purpose of record keeping and billing. I understand that Blaine and Associates Anaesthesiologists will not divulge any personal information to a third party (other than disclosed herein) unless required by law. I consent to Blaine and Associates contacting me using the details provided by me."],
 ["Professional Fees",
- "I understand that medical schemes each have their own price list for medical procedures, and there is currently no uniform guideline for what the anaesthetist may charge. I understand that Blaine and Associates are not contracted to any medical aid. I understand that I will receive an account from Blaine and Associates that is separate from the Hospital account and Surgeons account. I agree that I am responsible for discussing the fees of other healthcare professionals with them directly."],
+ "I understand that medical schemes each have their own price list for medical procedures, and there is currently no uniform guideline for what the anaesthetist may charge. I understand that Blaine and Associates are not contracted to any medical aid. I understand that I will receive an account from Blaine and Associates that is separate from the Hospital account and Surgeons account. I agree that I am responsible for discussing the fees of other healthcare professionals with them directly with them."],
 ["PLEASE NOTE",
  "I understand that Blaine and Associates Anaesthesiologists fees are currently priced above the base tariff rate of the Health Professions Council of South Africa, published in 2006 and 2012. I understand that my specific choice of medical insurance may cover anything from 30% to 100% of their fees. I understand that this may result in me being responsible for a co-payment or gap payment.",
  "consent.initials.pleaseNote"],
@@ -978,6 +978,12 @@ $('clauses').innerHTML = CLAUSES.map(([lead, body, initials]) => {
     : '';
   return `<li>${box}<span class="lead">${lead}</span>: ${body}</li>`;
 }).join('');
+
+$('cnote').innerHTML = (CLAUSES_VERIFIED
+  ? 'Clause wording checked against the practice’s master copy. '
+  : '<b>Clause wording transcribed from a photograph and not yet checked against the ' +
+    'practice’s master copy — verify before any patient signs this.</b> ')
+  + 'Software © 2026 Remparts Solutions (Pty) Ltd.';
 
 /* ── JSON bridge ─────────────────────────────────────────────── */
 const fields = () => [...form.elements].filter(e => e.name && e.name[0] !== '_');

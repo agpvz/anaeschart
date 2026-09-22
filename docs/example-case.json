@@ -152,7 +152,7 @@
     "teeth": { "yn": "yes", "details": "Crown upper right lateral incisor" },
     "alcohol": { "yn": "yes", "details": "4 units per week" },
     "smoking": { "yn": "no", "details": "Ex-smoker, stopped 2019" },
-    "reflux": { "yn": "yes", "details": "On omeprazole, well controlled" },
+    "reflux": { "yn": "yes" },
     "anythingElse": { "yn": "yes", "details": "Requests early mobilisation, dislikes IV in right arm" },
     "weightKg": 78.4,
     "heightM": 1.64,
