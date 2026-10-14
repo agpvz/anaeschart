@@ -20,10 +20,10 @@ not restyle the layout or reword the labels.
 
 ## 1. Page, palette, type
 
-**Page.** Single portrait page. The PDF measures 827.8 × 1180 pt (292 × 416 mm), an A-series
-√2 ratio a little under A3. Every dimension below is quoted **in PDF points at that size**;
-multiply by **0.72** to print on A4 portrait, which is the likely paper size — confirm with the
-practice. Keep the ratio; do not reflow.
+**Page.** Single **A4 portrait** page (210 × 297 mm), confirmed by the practice. The PDF was
+scanned at 827.8 × 1180 pt (292 × 416 mm), the same √2 ratio, so every dimension below is quoted
+**in PDF points at the scanned size**; multiply by **0.72** to get the printed A4 value
+(1 PDF pt ≈ 0.254 mm on paper). Keep the ratio; do not reflow.
 
 **Palette.** The form was laid out in Excel with the Office "Blue, Accent 1" theme, so the
 colours are exact theme tints:
@@ -147,10 +147,12 @@ numeric row the divider between blocks alternates: **dotted** on odd boundaries,
 even, so the solid dividers line up with the **5 `Time:` cells**, each of which spans two blocks
 (12 minor columns).
 
-The form prints no interval. The natural reading, and the one to offer as the default, is
-**one minor column = 5 min, one block = 30 min, one time cell = 1 hour**, giving a 5-hour page;
-treat that as an assumption to confirm with the practice, and let the user set the start time
-of each time cell.
+**The interval is variable.** The form prints none; the anaesthetist writes a clock time in
+each of the five `Time:` cells and chooses the column spacing to suit the case. The practice's
+usual setting, and the one to **default to, is 5 min per minor column**, which makes one block
+30 min, one time cell 1 hour and the page 5 hours. Offer the interval as a setting (5 min
+default, with at least 10 and 15 min as alternatives), apply it to every column, and derive the
+time-cell labels from the start time, as the SASA implementation does with its 5/15 picker.
 
 All cells are filled `#f2f2f2`; written values are centred.
 
@@ -249,7 +251,7 @@ forms, with these differences:
 - `pr` is the Blaine name for the SASA `hr`; alias both on import (`HR`, `Pulse`, `PR`).
 - `mean` may be monitor-read; carry a flag when it is calculated instead.
 - `cvp` is plotted here, unlike on the SASA form where it is a number row.
-- 60 columns, not 30. A row whose time does not fall on a column goes to the nearest one, and
+- 60 columns, not 30, and `minutesPerColumn` is a per-case setting defaulting to 5. A row whose time does not fall on a column goes to the nearest one, and
   rows off the page are reported, as in `SASA.fromRows()`.
 - The checkbox panels, patient-data boxes, notes, recovery row and footer boxes are plain
   booleans and strings; name them after the printed labels (`technique.general`,
@@ -260,7 +262,7 @@ forms, with these differences:
 
 ## 8. Checklist for the implementing agent
 
-- [ ] Portrait page at the PDF's √2 ratio; frame `#8ea9db`, rules `#305496`, cells `#f2f2f2`,
+- [ ] A4 portrait; frame `#8ea9db`, rules `#305496`, cells `#f2f2f2`,
       tints `#d9e1f2`, highlights `#fff2cc` on ASA / Airway / Hb / Allergies with a red ⚠.
 - [ ] Abadi-style labels; exact wording from §2 and §3; the three tinted sub-headers.
 - [ ] Chart panel: `Time:` row of 5 cells; graph; `Temp ⁰C`; then `SaO₂` `ETCO₂` `FiO₂`
